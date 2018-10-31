@@ -1,0 +1,15 @@
+<div class="tripList">
+  <div class="newTrip"><mat-icon class="addTripIcon">add</mat-icon></div>
+  <div class="tripElement" *ngFor="let trip of trips"
+       (click)="onSelect(trip)">
+    <div class="tripThumbnail">
+      <img *ngIf="trip.thumbnailPhoto; else elseBlock" src="{{trip.thumbnailPhoto}}" alt="{{trip.name}}"/>
+      <ng-template #elseBlock><img src="assets/img/thumbnail.svg" alt="{{trip.name}}"/></ng-template>
+    </div>
+    <div class="tripInfo">
+      <div class="tripName">{{trip.name | titlecase}}</div>
+      <div class="tripCreatedDate">Created at: {{trip.createdDate | date:"short"}}</div>
+    </div>
+  </div>
+</div>
+

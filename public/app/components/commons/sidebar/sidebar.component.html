@@ -1,0 +1,19 @@
+<div class="sidebar">
+  <div class="stack top-stack">
+    <a mat-icon-button aria-label="Home" id="homeBtn" class="logo" routerLink="/">
+      <img src="assets/img/logo.png"/>
+    </a>
+    <button mat-icon-button aria-label="Add new trip" id="addBtn">
+      <mat-icon class="sidebar-icon">add</mat-icon>
+    </button>
+  </div>
+  <div class="stack bottom-stack">
+    <mat-menu #userMenu="matMenu" [overlapTrigger]="false">
+      <a mat-menu-item routerLink="/logout">Logout</a>
+    </mat-menu>
+    <button mat-icon-button aria-label="Open user menu" [matMenuTriggerFor]="userMenu" id="userBtn" >
+      <mat-icon class="sidebar-icon">face</mat-icon>
+    </button>
+
+  </div>
+</div>

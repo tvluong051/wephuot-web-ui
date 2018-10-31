@@ -1,0 +1,68 @@
+.tripList {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 2rem 1rem;
+}
+
+.newTrip {
+  width: 12rem;
+  height: 16rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #4d394b;
+  border: 5px dashed #4d394b;
+  border-radius: 5px;
+  box-sizing: border-box;
+  margin-right: 3rem;
+  margin-bottom: 3rem;
+
+  .addTripIcon {
+    font-size: 5rem;
+    width: 5rem;
+    height: 5rem;
+  }
+}
+
+.tripElement {
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(77, 57, 75, 0.6);
+  width: 12rem;
+  height: 16rem;
+  border-radius: 0.4rem;
+  overflow: hidden;
+  margin-right: 3rem;
+  margin-bottom: 3rem;
+
+  .tripThumbnail {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    img {
+      background-color: white;
+      height: 100px;
+      width: 100px;
+      border-radius: 50px;
+      border: 2px solid white;
+    }
+  }
+
+  .tripInfo {
+    color: white;
+    padding: 0.7rem 0.5rem 0.5rem 0.5rem;
+    background: linear-gradient(transparent, rgba(60, 60, 60, .7));
+
+    .tripName {
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .tripCreatedDate {
+      font-size: 0.8rem;
+    }
+  }
+}
+

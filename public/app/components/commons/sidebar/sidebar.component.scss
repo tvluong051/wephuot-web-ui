@@ -1,0 +1,45 @@
+.sidebar {
+  height: 100%;
+  width: 4rem;
+  padding: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  background-color: #4d394b;
+  box-sizing: border-box;
+  color: white;
+  align-items: center;
+
+  .stack {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .top-stack {
+    flex: 1;
+  }
+
+  button {
+    margin-top: 0.5rem;
+    padding: 0.3rem;
+    background-color: transparent;
+
+    &:hover {
+      background-color: white;
+      color: #4d394b;
+    }
+
+    .sidebar-icon {
+      font-size: 2rem;
+      height: 2rem;
+      width: 2rem;
+    }
+  }
+
+  .logo {
+    img {
+      width: 2rem;
+      height: 2rem;
+    }
+  }
+
+}
