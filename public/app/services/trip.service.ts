@@ -39,6 +39,16 @@ export class TripService {
       );
   }
 
+  getTripDetail(tripId: string): Observable<Trip> {
+    return this.http.get<Trip>(`${this.tripsApiUrl}/trip/${tripId}`, {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+    })
+      .pipe(
+        tap(trip => this.log(`fetched trip id = ${tripId}`)),
+        catchError(this.handleError('getTripDetail', null))
+      );
+  }
+
   /**
    * Handle Http operation that failed.
    * Let the app continue.

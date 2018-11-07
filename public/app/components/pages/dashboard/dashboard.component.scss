@@ -1,3 +1,7 @@
+@import "../../../variables.scss";
+$theme-color: $default-theme-color;
+$theme-color-opacity: $default-theme-color-opacity;
+
 .tripList {
   display: flex;
   flex-wrap: wrap;
@@ -10,8 +14,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  color: #4d394b;
-  border: 5px dashed #4d394b;
+  color: $theme-color;
+  border: 5px dashed $theme-color;
   border-radius: 5px;
   box-sizing: border-box;
   margin-right: 3rem;
@@ -27,7 +31,7 @@
 .tripElement {
   display: flex;
   flex-direction: column;
-  background-color: rgba(77, 57, 75, 0.6);
+  background-color: $theme-color-opacity;
   width: 12rem;
   height: 16rem;
   border-radius: 0.4rem;

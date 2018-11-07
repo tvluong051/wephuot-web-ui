@@ -84,13 +84,10 @@ app.get('/logout', (req, res) => {
 
 app.use('/api', proxy.router);
 
-// Server static files from /browser
-
 const DIST_FOLDER = path.join(process.cwd(), 'dist');
 
 app.use(express.static(path.join(DIST_FOLDER, 'public')) );
 
-// All regular routes use the Universal engine
 app.use('/', (req, res) => res.sendFile(path.join(DIST_FOLDER, '/public/index.html'))) ;
 
 /****************************************************************************

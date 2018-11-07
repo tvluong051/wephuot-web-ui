@@ -15,11 +15,16 @@ import { DashboardComponent } from './components/pages/dashboard/dashboard.compo
 
 import { SidebarComponent } from './components/commons/sidebar/sidebar.component';
 import { TripAddDialogComponent } from './components/commons/trip-add-dialog/trip-add-dialog.component';
+import { TripDetailComponent } from './components/pages/trip-detail/trip-detail.component';
 
 const routes: Routes = [
   {
     path: 'dashboard',
     component: DashboardComponent
+  },
+  {
+    path: 'trip/:tripId',
+    component: TripDetailComponent
   },
   {
     path: '',
@@ -33,7 +38,8 @@ const routes: Routes = [
     AppComponent,
     DashboardComponent,
     SidebarComponent,
-    TripAddDialogComponent
+    TripAddDialogComponent,
+    TripDetailComponent
   ],
   imports: [
     BrowserModule,

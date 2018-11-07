@@ -1,0 +1,128 @@
+@import "../../../variables.scss";
+$theme-color: $default-theme-color;
+$theme-color-opacity: $default-theme-color-opacity;
+
+.tripDetailContainer {
+  padding-top: 1rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  color: #5a5a5a;
+
+  .backBtn {
+    display: inline-block;
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    margin-left: 2rem;
+    font-size: 1.5rem;
+    color: #5a5a5a;
+
+    &:hover {
+      background-color: transparent !important;
+      color: $theme-color;
+    }
+
+    .backIcon {
+      margin-right: 0.5rem;
+      padding-bottom: 0.2rem;
+    }
+  }
+
+  .container {
+    flex: 1;
+    display: flex;
+    padding-bottom: 3rem;
+
+    .leftContainer {
+      padding: 0.5rem 2rem 1rem;
+      flex: 2;
+      display: flex;
+      flex-direction: column;
+
+      overflow: hidden;
+
+      .tripName {
+        font-size: 2rem;
+      }
+
+      .tripLastModified {
+        margin-bottom: 3rem;
+        font-size: 0.9rem;
+        font-style: italic;
+      }
+
+      .tripPhoto {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 3rem;
+
+        img {
+          height: 20rem;
+          width: 20rem;
+          border-radius: 10rem;
+          border: 3px solid $theme-color;
+        }
+      }
+
+      .tripParticipants {
+        margin-bottom: 3rem;
+        position: relative;
+        height: 106px;
+        width: 100%;
+
+        .participant {
+          background-color: white;
+          height: 106px;
+          width: 106px;
+          border-radius: 53px;
+          border: 1px solid $theme-color;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+
+          position: absolute;
+          transform-origin: 90% 92%;
+          transition: .3s;
+
+          &:hover ~ .participant {
+            transform: translateX(100vw) !important;
+          }
+
+          img {
+            background-color: white;
+            height: 100px;
+            width: 100px;
+            border-radius: 50px;
+            border: 1px solid #4d394b;
+          }
+        }
+      }
+
+    }
+
+    .rightContainer {
+      position: relative;
+      padding: 2rem;
+      flex: 3;
+      background-color: $theme-color-opacity;
+      border-radius: 2rem 0 0 2rem;
+
+      &:before {
+        content: '';
+        width: 0;
+        height: 0;
+        border: 2rem solid transparent;
+        border-right-color: $theme-color-opacity;
+        font-size: 0;
+        position: absolute;
+        left: -4rem;
+        top: 15rem;
+
+      }
+    }
+  }
+}
+
+

@@ -1,0 +1,27 @@
+<div class="tripDetailContainer">
+  <div>
+    <button mat-flat-button class="backBtn" (click)="goBack()"><mat-icon class="backIcon">reply</mat-icon>Back</button>
+  </div>
+  <div *ngIf="trip" class="container">
+    <section class="leftContainer">
+      <div class="tripName">{{trip.name}}</div>
+      <div class="tripLastModified">Last modified at {{trip.lastModified | date: "short"}}</div>
+      <div class="tripPhoto">
+        <img *ngIf="trip.thumbnailPhoto; else noTripThumbnail" src="{{trip.thumbnailPhoto}}" alt="{{trip.name}}"/>
+        <ng-template #noTripThumbnail><img src="assets/img/thumbnail.svg" alt="{{trip.name}}"/></ng-template>
+      </div>
+      <div class="tripParticipants">
+        <div class="participant" *ngFor="let participant of trip.participants; let idx = index" [ngStyle]="{'transform': 'translateX(' + (3 *idx) + 'rem)'}">
+          <img *ngIf="participant.profilPic; else noProfilPic" src="{{participant.profilePic}}" alt="{{participant.name}}"/>
+          <ng-template #noProfilPic><img src="assets/img/defaultAvatar.jpg" alt="{{participant.name}}"/></ng-template>
+        </div>
+      </div>
+      <div class="tripDescription">{{trip.description}}</div>
+    </section>
+    <section class="rightContainer">
+      <div class="spendings">
+      </div>
+
+    </section>
+  </div>
+</div>

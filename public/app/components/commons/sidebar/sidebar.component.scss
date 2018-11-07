@@ -1,10 +1,14 @@
+@import "../../../variables.scss";
+$theme-color: $default-theme-color;
+$theme-color-opacity: $default-theme-color-opacity;
+
 .sidebar {
   height: 100%;
   width: 4rem;
   padding: 1rem 0;
   display: flex;
   flex-direction: column;
-  background-color: #4d394b;
+  background-color: $theme-color;
   box-sizing: border-box;
   color: white;
   align-items: center;
@@ -25,7 +29,7 @@
 
     &:hover {
       background-color: white;
-      color: #4d394b;
+      color: $theme-color;
     }
 
     .sidebar-icon {

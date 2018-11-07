@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TripService } from '../../../services/trip.service';
-import { Trip, Trips } from '../../../models/trip.model';
+import { Trip, Trips, TripStatus } from '../../../models/trip.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -10,9 +11,8 @@ import { Trip, Trips } from '../../../models/trip.model';
 export class DashboardComponent implements OnInit {
 
   private trips: Trips;
-  private selectedTrip: Trip;
 
-  constructor(private tripService: TripService) { }
+  constructor(private tripService: TripService, private router: Router) { }
 
   ngOnInit() {
     this.getTrips();
@@ -25,7 +25,12 @@ export class DashboardComponent implements OnInit {
   }
 
   onSelect(selectedTrip: Trip) {
-    this.selectedTrip = selectedTrip;
+    if (selectedTrip.status !== TripStatus.VALIDATED) {
+      console.log('error');
+    } else {
+      this.router.navigate(['trip', selectedTrip.tripId]);
+    }
+
   }
 
 }
