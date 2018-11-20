@@ -15,10 +15,10 @@
     </mat-step>
     <mat-step>
       <ng-template matStepLabel="">Some photo to remember it!</ng-template>
-      <div class="wrapper">
+      <div class="file-upload-wrapper">
         <div class="file-upload">
           <input type="file" (change)="fileChangeEvent($event)"/>
-          <mat-icon>face</mat-icon>
+          <mat-icon class="uploadIcon">cloud_upload</mat-icon> Choose a file
         </div>
       </div>
       <div class="tripCoverInput">
