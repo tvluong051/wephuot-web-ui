@@ -11,7 +11,7 @@ import { Trip } from '../../../models/trip.model';
 })
 export class TripDetailComponent implements OnInit {
 
-  private trip: Trip;
+  trip: Trip;
 
   constructor(
     private route: ActivatedRoute,

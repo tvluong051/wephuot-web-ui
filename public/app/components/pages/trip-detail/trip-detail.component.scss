@@ -1,6 +1,7 @@
 @import "../../../variables.scss";
 $theme-color: $default-theme-color;
 $theme-color-opacity: $default-theme-color-opacity;
+$avatar-size: 7rem;
 
 .tripDetailContainer {
   padding-top: 1rem;
@@ -119,7 +120,6 @@ $theme-color-opacity: $default-theme-color-opacity;
         position: absolute;
         left: -4rem;
         top: 15rem;
-
       }
     }
   }

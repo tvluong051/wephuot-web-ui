@@ -12,7 +12,8 @@ export class Trip {
   status: TripStatus;
   createdDate: number;
   lastModified: number;
-  thumbnailPhoto: string;
+  coverPhotoBase64Encoded: string;
+  coverPhoto: string;
   participants: Users;
 }
 

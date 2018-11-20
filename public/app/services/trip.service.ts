@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs/index';
 import { Trip, Trips } from '../models/trip.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { catchError, tap } from 'rxjs/internal/operators';
+import { catchError, map, tap } from 'rxjs/internal/operators';
+import { Users } from '../models/user.model';
+import * as url from 'url';
 
 @Injectable({
   providedIn: 'root'
@@ -15,15 +17,28 @@ export class TripService {
     private http: HttpClient
   ) { }
 
-  saveTrip(trip: Trip): Observable<Trips> {
-    this.http.post<Trip>(this.tripsApiUrl, trip, {
-      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+  saveTrip(trip: Trip): Promise<string> {
+    return this.http.post<string>(`${this.tripsApiUrl}/trip`, trip, {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      responseType: 'text' as 'json'
     })
-      .pipe(
-        tap(result => this.log(`save trip ${result}`)),
-        catchError(this.handleError('save trip', null))
-      );
-    return this.getTrips();
+      .toPromise();
+  }
+
+  addParticipants(tripId: string, users: Users): Promise<string> {
+    return this.http.post<string>(`${this.tripsApiUrl}/trip/${tripId}/participants`, users, {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      responseType: 'text' as 'json'
+    })
+      .toPromise();
+  }
+
+  validateTrip(tripId: string): Promise<any> {
+    return this.http.put<string>(`${this.tripsApiUrl}/trip/${tripId}`, null, {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      responseType: 'text' as 'json'
+    })
+      .toPromise();
   }
 
   getTrips(): Observable<Trips> {
@@ -35,6 +50,7 @@ export class TripService {
     })
       .pipe(
         tap(trips => this.log('fetched trips')),
+        map(trips => trips.map(trip => this.buildTripCoverUrl(trip))),
         catchError(this.handleError('getTrips', []))
       );
   }
@@ -45,8 +61,18 @@ export class TripService {
     })
       .pipe(
         tap(trip => this.log(`fetched trip id = ${tripId}`)),
+        map(trip => this.buildTripCoverUrl(trip)),
         catchError(this.handleError('getTripDetail', null))
       );
+  }
+
+  private buildTripCoverUrl(trip: Trip): Trip {
+    if (trip.coverPhoto) {
+      const coverPhotoUrl = url.parse(trip.coverPhoto);
+
+      trip.coverPhoto = coverPhotoUrl.protocol && coverPhotoUrl.host ? trip.coverPhoto : '/staticFile' + trip.coverPhoto;
+    }
+    return trip;
   }
 
   /**

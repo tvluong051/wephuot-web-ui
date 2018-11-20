@@ -23,6 +23,7 @@ let mainAuthenticate = options => passportConfig.authenticate(options);
 const serverConfig = require("./server-config").getServerConfig();
 
 const PORT = serverConfig.port;
+const STATIC_FILE_PATH = serverConfig.staticFilePath;
 // Express server
 const app = express();
 
@@ -86,7 +87,8 @@ app.use('/api', proxy.router);
 
 const DIST_FOLDER = path.join(process.cwd(), 'dist');
 
-app.use(express.static(path.join(DIST_FOLDER, 'public')) );
+app.use(express.static(path.join(DIST_FOLDER, 'public')));
+app.use('/staticFile', express.static(STATIC_FILE_PATH));
 
 app.use('/', (req, res) => res.sendFile(path.join(DIST_FOLDER, '/public/index.html'))) ;
 

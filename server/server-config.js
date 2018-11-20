@@ -22,6 +22,7 @@ function setServerConfig() {
   // Application configuration
   const nodeEnv = config.environment;
   serverConfig.port = process.env.port || config.port;
+  serverConfig.staticFilePath = config.staticFilePath;
 
   // Detect environment
   const providerId = process.env.idProvider || config.provider || 'facebook';

@@ -1,3 +1,65 @@
-<p>
-  trip-add-dialog works!
-</p>
+<div mat-dialog-content>
+  <form [formGroup]="tripCreationFormGroup">
+  <mat-horizontal-stepper labelPosition="bottom" linear #stepper>
+    <mat-step formGroupName="tripDetailFormGroup">
+      <ng-template matStepLabel>Tell us about your trip!</ng-template>
+      <mat-form-field class="tripNameInput">
+        <input matInput placeholder="Trip name" formControlName="tripName" required>
+      </mat-form-field>
+      <mat-form-field class="tripDescriptionInput">
+        <textarea matInput placeholder="Some words about your trip" formControlName="tripDescription"></textarea>
+      </mat-form-field>
+      <div class="stepControl">
+        <button *ngIf="tripCreationFormGroup.value.tripDetailFormGroup.tripName" mat-button matStepperNext type="button">Next</button>
+      </div>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel="">Some photo to remember it!</ng-template>
+      <div class="wrapper">
+        <div class="file-upload">
+          <input type="file" (change)="fileChangeEvent($event)"/>
+          <mat-icon>face</mat-icon>
+        </div>
+      </div>
+      <div class="tripCoverInput">
+        <image-cropper
+          [imageChangedEvent]="imageChangedEvent"
+          [maintainAspectRatio]="true"
+          [aspectRatio]="1/1"
+          [resizeToWidth]="384"
+          format="png"
+          (imageCropped)="imageCropped($event)"
+          (imageLoaded)="imageLoaded()"
+          (loadImageFailed)="loadImageFailed()"
+        ></image-cropper>
+
+        <img [src]="croppedImage"/>
+      </div>
+      <div class="stepControl">
+        <button mat-button matStepperPrevious type="button">Back</button>
+        <button *ngIf="croppedImage" mat-button matStepperNext type="button">Next</button>
+      </div>
+    </mat-step>
+    <mat-step formGroupName="participantsFormGroup">
+        <ng-template matStepLabel>Who were you with?</ng-template>
+        <mat-form-field>
+          <input matInput placeholder="Test" formControlName="test">
+        </mat-form-field>
+        <div class="stepControl">
+          <button mat-button matStepperPrevious type="button">Back</button>
+          <button mat-button matStepperNext type="button">Next</button>
+        </div>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Almost done</ng-template>
+      <p>Let validate your trip to start our money management!</p>
+      <div>
+        <button mat-button matStepperPrevious type="button">Back</button>
+        <button mat-button (click)="stepper.reset()">Reset</button>
+        <button mat-button (click)="saveTrip()">Save as draft</button>
+        <button mat-button (click)="saveTrip(true)">Done</button>
+      </div>
+    </mat-step>
+  </mat-horizontal-stepper>
+  </form>
+</div>

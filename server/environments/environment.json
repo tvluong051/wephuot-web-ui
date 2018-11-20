@@ -1,6 +1,7 @@
 {
   "environment": "development",
   "port": 5000,
+  "staticFilePath": "/var/www/we-phuot",
   "idProvider": "facebook",
   "services": [
     {
