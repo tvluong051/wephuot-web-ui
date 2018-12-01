@@ -3,6 +3,8 @@ import { Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { TripService } from '../../../services/trip.service';
 import { Trip } from '../../../models/trip.model';
+import { Spendings } from '../../../models/spending.model';
+import { Users } from '../../../models/user.model';
 
 @Component({
   selector: 'app-trip-detail',
@@ -12,6 +14,8 @@ import { Trip } from '../../../models/trip.model';
 export class TripDetailComponent implements OnInit {
 
   trip: Trip;
+  spendings: Spendings;
+  participants: Users;
 
   constructor(
     private route: ActivatedRoute,
@@ -28,9 +32,15 @@ export class TripDetailComponent implements OnInit {
 
     this.tripService.getTripDetail(tripId)
       .subscribe(trip => {
-        console.log(trip);
         this.trip = trip;
+        this.participants = trip.participants;
+        this.getSpendings(tripId);
       });
+  }
+
+  getSpendings(tripId: string): void {
+    this.tripService.getTripSpendings(tripId)
+      .subscribe(spendings => this.spendings = spendings);
   }
 
   goBack(): void {

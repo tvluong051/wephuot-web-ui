@@ -5,11 +5,15 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import {
-  MatButtonModule,
+  MatButtonModule, MatCheckboxModule,
+  MatDatepickerModule,
   MatDialogModule,
+  MatExpansionModule,
   MatIconModule,
   MatInputModule,
   MatMenuModule,
+  MatNativeDateModule,
+  MatSelectModule,
   MatSidenavModule,
   MatStepperModule
 } from '@angular/material';
@@ -22,6 +26,8 @@ import { SidebarComponent } from './components/commons/sidebar/sidebar.component
 import { TripAddDialogComponent } from './components/commons/trip-add-dialog/trip-add-dialog.component';
 import { TripDetailComponent } from './components/pages/trip-detail/trip-detail.component';
 import { ImageCropperModule } from 'ngx-image-cropper';
+import { SpendingsListComponent } from './components/pages/trip-detail/spendings-list/spendings-list.component';
+import { SpendingDetailComponent } from './components/pages/trip-detail/spending-detail/spending-detail.component';
 
 const routes: Routes = [
   {
@@ -45,7 +51,9 @@ const routes: Routes = [
     DashboardComponent,
     SidebarComponent,
     TripAddDialogComponent,
-    TripDetailComponent
+    TripDetailComponent,
+    SpendingsListComponent,
+    SpendingDetailComponent
   ],
   imports: [
     BrowserModule,
@@ -54,10 +62,15 @@ const routes: Routes = [
     HttpClientModule,
     ImageCropperModule,
     MatButtonModule,
+    MatCheckboxModule,
+    MatDatepickerModule,
     MatDialogModule,
+    MatExpansionModule,
     MatIconModule,
     MatInputModule,
     MatMenuModule,
+    MatNativeDateModule,
+    MatSelectModule,
     MatSidenavModule,
     MatStepperModule,
     ReactiveFormsModule,

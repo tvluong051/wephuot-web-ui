@@ -19,8 +19,8 @@
       <div class="tripDescription">{{trip.description}}</div>
     </section>
     <section class="rightContainer">
-      <div class="spendings">
-      </div>
+      <button mat-flat-button class="addSpendingBtn"><mat-icon>add</mat-icon></button>
+      <app-spendings-list class="spendings" [spendings]="spendings" [participants]="participants"></app-spendings-list>
 
     </section>
   </div>

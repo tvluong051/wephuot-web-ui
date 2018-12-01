@@ -5,6 +5,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, map, tap } from 'rxjs/internal/operators';
 import { Users } from '../models/user.model';
 import * as url from 'url';
+import { Spendings } from '../models/spending.model';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,7 @@ import * as url from 'url';
 export class TripService {
 
   private tripsApiUrl = 'api/money-management/trips';
+  private spendingsApiUrl = 'api/money-management/spendings';
 
   constructor(
     private http: HttpClient
@@ -63,6 +65,19 @@ export class TripService {
         tap(trip => this.log(`fetched trip id = ${tripId}`)),
         map(trip => this.buildTripCoverUrl(trip)),
         catchError(this.handleError('getTripDetail', null))
+      );
+  }
+
+  getTripSpendings(tripId: string): Observable<Spendings> {
+    return this.http.get<Spendings>(this.spendingsApiUrl, {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: {
+        tripId: tripId
+      }
+    })
+      .pipe(
+        tap(spendings => this.log('fetched spendings')),
+        catchError(this.handleError('getSpendings', []))
       );
   }
 
