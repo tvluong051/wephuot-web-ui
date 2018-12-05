@@ -1,33 +1,18 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
 
-import {
-  MatButtonModule, MatCheckboxModule,
-  MatDatepickerModule,
-  MatDialogModule,
-  MatExpansionModule,
-  MatIconModule,
-  MatInputModule,
-  MatMenuModule,
-  MatNativeDateModule,
-  MatSelectModule,
-  MatSidenavModule,
-  MatStepperModule
-} from '@angular/material';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { DashboardModule } from './components/pages/dashboard/dashboard.module';
+import { HttpClientModule } from '@angular/common/http';
+import { MatSidenavModule } from '@angular/material';
+import { RouterModule, Routes } from '@angular/router';
+import { SidebarModule } from './components/commons/sidebar/sidebar.module';
+import { TripAddDialogModule } from './components/commons/trip-add-dialog/trip-add-dialog.module';
+import { TripDetailModule } from './components/pages/trip-detail/trip-detail.module';
 
 import { AppComponent } from './app.component';
-import { DashboardComponent } from './components/pages/dashboard/dashboard.component';
-
-import { SidebarComponent } from './components/commons/sidebar/sidebar.component';
 import { TripAddDialogComponent } from './components/commons/trip-add-dialog/trip-add-dialog.component';
+import { DashboardComponent } from './components/pages/dashboard/dashboard.component';
 import { TripDetailComponent } from './components/pages/trip-detail/trip-detail.component';
-import { ImageCropperModule } from 'ngx-image-cropper';
-import { SpendingsListComponent } from './components/pages/trip-detail/spendings-list/spendings-list.component';
-import { SpendingDetailComponent } from './components/pages/trip-detail/spending-detail/spending-detail.component';
+
 
 const routes: Routes = [
   {
@@ -47,39 +32,20 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [
-    AppComponent,
-    DashboardComponent,
-    SidebarComponent,
-    TripAddDialogComponent,
-    TripDetailComponent,
-    SpendingsListComponent,
-    SpendingDetailComponent
+    AppComponent
   ],
   imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    FormsModule,
+    DashboardModule,
     HttpClientModule,
-    ImageCropperModule,
-    MatButtonModule,
-    MatCheckboxModule,
-    MatDatepickerModule,
-    MatDialogModule,
-    MatExpansionModule,
-    MatIconModule,
-    MatInputModule,
-    MatMenuModule,
-    MatNativeDateModule,
-    MatSelectModule,
     MatSidenavModule,
-    MatStepperModule,
-    ReactiveFormsModule,
-    RouterModule.forRoot(routes)
+    RouterModule.forRoot(routes),
+    SidebarModule,
+    TripAddDialogModule,
+    TripDetailModule
   ],
   entryComponents: [
     TripAddDialogComponent
   ],
-  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
