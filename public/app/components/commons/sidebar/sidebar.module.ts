@@ -5,6 +5,7 @@ import {
   MatMenuModule
 } from '@angular/material';
 import { SidebarComponent } from './sidebar.component';
+import { RouterModule } from '@angular/router';
 
 
 @NgModule({
@@ -14,7 +15,8 @@ import { SidebarComponent } from './sidebar.component';
   imports: [
     MatButtonModule,
     MatIconModule,
-    MatMenuModule
+    MatMenuModule,
+    RouterModule
   ],
   exports: [
     SidebarComponent

@@ -5,14 +5,11 @@ import { MatDialog } from '@angular/material';
 
 import { TripAddDialogComponent } from '../../commons/trip-add-dialog/trip-add-dialog.component';
 
-import { TripService } from '../../../services/trip.service';
 import { Trip, Trips, TripStatus } from '../../../models/trip.model';
-import { User } from '../../../models/user.model';
-
-export interface TripAddDialogData {
-  newTrip: Trip;
-  creator: User;
-}
+import { Observable } from 'rxjs';
+import { select, Store } from '@ngrx/store';
+import { getUserTripsState } from '../../../trips/store/reducers';
+import { TripFetchTripsAction } from 'public/app/trips/store/actions/trip.action';
 
 @Component({
   selector: 'app-dashboard',
@@ -21,16 +18,20 @@ export interface TripAddDialogData {
 })
 export class DashboardComponent implements OnInit {
 
-  trips: Trips;
+  trips$: Observable<Trips>;
 
-  constructor(private dialog: MatDialog, private tripService: TripService, private router: Router) { }
+  constructor(private dialog: MatDialog, private store: Store<any>, private router: Router) {
+    this.trips$ = this.store.pipe(
+      select(getUserTripsState)
+    );
+  }
 
   ngOnInit() {
     this.getTrips();
   }
 
   getTrips(): void {
-    this.tripService.getTrips().subscribe(trips => this.trips = trips);
+    this.store.dispatch(new TripFetchTripsAction({userId: 'testId'}));
   }
 
   onSelect(selectedTrip: Trip): void {
@@ -48,11 +49,7 @@ export class DashboardComponent implements OnInit {
       data: {}
     });
 
-    dialogRef.afterClosed().subscribe(creation => {
-      if (creation) {
-        this.getTrips();
-      }
-    });
+    dialogRef.afterClosed().subscribe(() => console.log('Add trip dialog close'));
   }
 
 }

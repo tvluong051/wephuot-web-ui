@@ -5,6 +5,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { MatSidenavModule } from '@angular/material';
 import { RouterModule, Routes } from '@angular/router';
 import { SidebarModule } from './components/commons/sidebar/sidebar.module';
+import { StoreModule } from '@ngrx/store';
 import { TripAddDialogModule } from './components/commons/trip-add-dialog/trip-add-dialog.module';
 import { TripDetailModule } from './components/pages/trip-detail/trip-detail.module';
 
@@ -12,6 +13,9 @@ import { AppComponent } from './app.component';
 import { TripAddDialogComponent } from './components/commons/trip-add-dialog/trip-add-dialog.component';
 import { DashboardComponent } from './components/pages/dashboard/dashboard.component';
 import { TripDetailComponent } from './components/pages/trip-detail/trip-detail.component';
+import { TripModule } from './trips/trip.module';
+import { EffectsModule } from '@ngrx/effects';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
 
 const routes: Routes = [
@@ -40,6 +44,12 @@ const routes: Routes = [
     MatSidenavModule,
     RouterModule.forRoot(routes),
     SidebarModule,
+    StoreModule.forRoot({}),
+    EffectsModule.forRoot([]),
+    StoreDevtoolsModule.instrument({
+      maxAge: 250 // Retains last 25 states
+    }),
+    TripModule,
     TripAddDialogModule,
     TripDetailModule
   ],

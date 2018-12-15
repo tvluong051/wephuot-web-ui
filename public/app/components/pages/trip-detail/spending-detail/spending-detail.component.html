@@ -17,11 +17,11 @@
       <div class="crediterInputWrapper">
         <div class="crediterInputLabel">Crediter: </div>
         <div class="crediterInput input">
-          <img class="participantAvatar" *ngIf="spending.crediter.profilPic; else noCrediterAvatar" src="{{spending.crediter.profilePic}}" alt="{{spending.crediter.name}}"/>
+          <img class="participantAvatar" *ngIf="spending.crediter.profilePic; else noCrediterAvatar" src="{{spending.crediter.profilePic}}" alt="{{spending.crediter.name}}"/>
           <ng-template #noCrediterAvatar><img class="participantAvatar" src="assets/img/defaultAvatar.jpg" alt="{{spending.crediter.name}}"/></ng-template>
           <mat-select placeholder="Crediter" panelClass="crediterList" [(value)]="crediterId" disableOptionCentering>
             <mat-option *ngFor="let participant of participants" [value]="participant.userId" class="crediterOption">
-              <img class="participantAvatar" *ngIf="participant.profilPic; else noProfilPic" src="{{participant.profilePic}}" alt="{{participant.name}}"/>
+              <img class="participantAvatar" *ngIf="participant.profilePic; else noProfilPic" src="{{participant.profilePic}}" alt="{{participant.name}}"/>
               <ng-template #noProfilPic><img class="participantAvatar" src="assets/img/defaultAvatar.jpg" alt="{{participant.name}}"/></ng-template>
             </mat-option>
           </mat-select>
@@ -48,7 +48,7 @@
     </div>
     <div class="section-form">
       <div class="sharepart" *ngFor="let participant of participants">
-        <img class="participantAvatar" *ngIf="participant.profilPic; else noProfilPic" src="{{participant.profilePic}}" alt="{{participant.name}}"/>
+        <img class="participantAvatar" *ngIf="participant.profilePic; else noProfilPic" src="{{participant.profilePic}}" alt="{{participant.name}}"/>
         <ng-template #noProfilPic><img class="participantAvatar" src="assets/img/defaultAvatar.jpg" alt="{{participant.name}}"/></ng-template>
         <mat-form-field class="sharepartAmountInput">
           <input matInput placeholder="Amount" type="number" [value]="spending.shareparts[participant.userId]">
@@ -58,7 +58,7 @@
     </div>
   </div>
   <mat-action-row class="actionRow">
-    <button mat-icon-button class="cancelBtn"><mat-icon>cancel</mat-icon></button>
+    <button mat-icon-button class="cancelBtn" (click)="resetSpending()"><mat-icon>cancel</mat-icon></button>
     <button mat-icon-button class="deleteBtn"><mat-icon>delete</mat-icon></button>
     <button mat-icon-button class="saveBtn"><mat-icon>save</mat-icon></button>
   </mat-action-row>

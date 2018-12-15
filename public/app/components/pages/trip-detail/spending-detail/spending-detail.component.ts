@@ -12,11 +12,7 @@ export class SpendingDetailComponent implements OnInit {
   @Input('spending')
   set _spending(spending: Spending) {
     this.spending = spending;
-    if (spending) {
-      this.spentDateInput = new Date(spending.spentDate);
-      this.crediterId = spending.crediter.userId;
-      this.equallyDivided = spending.equallyDivided;
-    }
+    this.resetSpending();
   }
 
   @Input()
@@ -30,6 +26,16 @@ export class SpendingDetailComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+  }
+
+  resetSpending(): void {
+    const spending = this.spending;
+
+    if (spending) {
+      this.spentDateInput = new Date(spending.spentDate);
+      this.crediterId = spending.crediter.userId;
+      this.equallyDivided = spending.equallyDivided;
+    }
   }
 
 }

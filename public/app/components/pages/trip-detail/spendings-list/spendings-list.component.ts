@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Spendings } from '../../../../models/spending.model';
 import { Users } from '../../../../models/user.model';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-spendings-list',
@@ -9,10 +10,10 @@ import { Users } from '../../../../models/user.model';
 })
 export class SpendingsListComponent implements OnInit {
   @Input()
-  spendings: Spendings;
+  spendings$: Observable<Spendings>;
 
   @Input()
-  participants: Users;
+  participants$: Observable<Users>;
 
   constructor() { }
 
