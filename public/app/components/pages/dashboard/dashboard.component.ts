@@ -1,36 +1,60 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { MatDialog } from '@angular/material';
 
 import { TripAddDialogComponent } from '../../commons/trip-add-dialog/trip-add-dialog.component';
 
-import { TripService } from '../../../services/trip.service';
 import { Trip, Trips, TripStatus } from '../../../models/trip.model';
-import { User } from '../../../models/user.model';
-
-export interface TripAddDialogData {
-  newTrip: Trip;
-  creator: User;
-}
+import { Observable, Subject } from 'rxjs';
+import { select, Store } from '@ngrx/store';
+import { getUserTripsState } from '../../../trips/store/reducers';
+import { TripFetchTripsAction } from 'public/app/trips/store/actions/trip.action';
+import { User } from 'public/app/models/user.model';
+import { getLoggedUser } from 'public/app/users/store/reducers';
+import { takeUntil, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
 
-  trips: Trips;
+  trips$: Observable<Trips>;
+  loggedUser$: Observable<User>;
+  private unsubscribed$ = new Subject();
 
-  constructor(private dialog: MatDialog, private tripService: TripService, private router: Router) { }
+  constructor(private dialog: MatDialog, private store: Store<any>, private router: Router) {
+    this.trips$ = this.store.pipe(
+      select(getUserTripsState),
+      map(trips => {
+        trips.sort((t1, t2) => t2.lastModified - t1.lastModified);
+        return trips;
+      })
+    );
+    this.loggedUser$ = this.store.pipe(
+      select(getLoggedUser)
+    );
+  }
 
   ngOnInit() {
     this.getTrips();
   }
 
+  ngOnDestroy(): void {
+    this.unsubscribed$.next();
+    this.unsubscribed$.complete();
+  }
+
   getTrips(): void {
-    this.tripService.getTrips().subscribe(trips => this.trips = trips);
+    this.loggedUser$.pipe(
+      takeUntil(this.unsubscribed$)
+    ).subscribe(loggedUser => {
+      if (loggedUser) {
+        this.store.dispatch(new TripFetchTripsAction({userId: loggedUser.userId}));
+      }
+    });
   }
 
   onSelect(selectedTrip: Trip): void {
@@ -44,15 +68,13 @@ export class DashboardComponent implements OnInit {
   openAddTripDialog(): void {
     // noinspection TypeScriptValidateTypes
     const dialogRef = this.dialog.open(TripAddDialogComponent, {
-      width: '80vw',
-      data: {}
+      width: '80vw'
     });
 
-    dialogRef.afterClosed().subscribe(creation => {
-      if (creation) {
-        this.getTrips();
-      }
-    });
+    dialogRef.afterClosed()
+      .pipe(
+        takeUntil(this.unsubscribed$)
+      ).subscribe(() => console.log('Add trip dialog close'));
   }
 
 }

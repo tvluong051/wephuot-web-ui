@@ -1,0 +1,60 @@
+<div *ngIf="(loggedUser$ | async) as loggedUser" class="addSpendingContainer">
+  <form [formGroup]="addSpendingFormGroup">
+    <mat-form-field class="descriptionInput">
+      <input matInput formControlName="description" placeholder="Description" type="text">
+    </mat-form-field>
+    <div class="crediter section" formGroupName="crediterFormGroup">
+      <div class="section-label">
+        <mat-icon>credit_card</mat-icon>
+      </div>
+      <div class="section-form">
+        <div class="crediterInputWrapper">
+          <div class="crediterInputLabel">Crediter: </div>
+          <div class="crediterInput input">
+            <img class="participantAvatar" *ngIf="loggedUser.profilePic; else noCrediterAvatar" src="{{loggedUser.profilePic}}" alt="{{loggedUser.name}}"/>
+            <ng-template #noCrediterAvatar><img class="participantAvatar" src="assets/img/defaultAvatar.jpg" alt="{{loggedUser.name}}"/></ng-template>
+            <mat-select placeholder="Crediter" panelClass="crediterList" formControlName="crediterId" disableOptionCentering>
+              <mat-option *ngFor="let participant of participants$ | async" [value]="participant.userId" class="crediterOption">
+                <img class="participantAvatar" *ngIf="participant.profilePic; else noProfilPic" src="{{participant.profilePic}}" alt="{{participant.name}}"/>
+                <ng-template #noProfilPic><img class="participantAvatar" src="assets/img/defaultAvatar.jpg" alt="{{participant.name}}"/></ng-template>
+              </mat-option>
+            </mat-select>
+          </div>
+        </div>
+        <mat-form-field class="amountInput input">
+          <input matInput placeholder="Amount" type="number" formControlName="amount">
+          <span matPrefix>$&nbsp;</span>
+        </mat-form-field>
+
+        <mat-form-field class="spentDateInput input">
+          <input matInput [matDatepicker]="spentDatePicker" placeholder="Choose a date" formControlName="spentDate">
+          <mat-datepicker-toggle matSuffix [for]="spentDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #spentDatePicker></mat-datepicker>
+        </mat-form-field>
+      </div>
+    </div>
+    
+    <div class="section checkboxSection" formGroupName="sharepartsFormGroup">
+      <mat-checkbox formControlName="equallyDivided">Do you share equally?</mat-checkbox>
+    </div>
+    <div class="shareparts section" *ngIf="!addSpendingFormGroup.value.sharepartsFormGroup.equallyDivided">
+      <div class="section-label">
+        <mat-icon>attach_money</mat-icon>
+      </div>
+      <div class="section-form" formGroupName="sharepartsFormGroup" *ngIf="(participants$ | async) as participants ">
+        <div class="sharepart" formGroupName="shareparts" *ngFor="let participant of participants">
+          <img class="participantAvatar" *ngIf="participant.profilePic; else noProfilPic" src="{{participant.profilePic}}" alt="{{participant.name}}"/>
+          <ng-template #noProfilPic><img class="participantAvatar" src="assets/img/defaultAvatar.jpg" alt="{{participant.name}}"/></ng-template>
+          <mat-form-field class="sharepartAmountInput">
+            <input matInput [formControlName]="participant.userId" placeholder="Amount" type="number">
+            <span matPrefix>$&nbsp;</span>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+  </form>
+  <div class="actionRow">
+    <button mat-icon-button class="cancelBtn" (click)="discard()"><mat-icon>cancel</mat-icon></button>
+    <button mat-icon-button class="saveBtn" (click)="saveSpending()"><mat-icon>save</mat-icon></button>    
+  </div>
+</div>

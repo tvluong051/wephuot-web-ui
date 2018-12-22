@@ -2,8 +2,8 @@
   <div>
     <button mat-flat-button class="backBtn" (click)="goBack()"><mat-icon class="backIcon">reply</mat-icon>Back</button>
   </div>
-  <div *ngIf="trip" class="container">
-    <section class="leftContainer">
+  <div class="container">
+    <section *ngIf="(trip$ | async) as trip" class="leftContainer">
       <div class="tripName">{{trip.name}}</div>
       <div class="tripLastModified">Last modified at {{trip.lastModified | date: "short"}}</div>
       <div class="tripPhoto">
@@ -12,16 +12,16 @@
       </div>
       <div class="tripParticipants">
         <div class="participant" *ngFor="let participant of trip.participants; let idx = index" [ngStyle]="{'transform': 'translateX(' + (3 *idx) + 'rem)'}">
-          <img *ngIf="participant.profilPic; else noProfilPic" src="{{participant.profilePic}}" alt="{{participant.name}}"/>
+          <img *ngIf="participant.profilePic; else noProfilPic" src="{{participant.profilePic}}" alt="{{participant.name}}"/>
           <ng-template #noProfilPic><img src="assets/img/defaultAvatar.jpg" alt="{{participant.name}}"/></ng-template>
         </div>
       </div>
       <div class="tripDescription">{{trip.description}}</div>
     </section>
     <section class="rightContainer">
-      <div class="spendings">
-      </div>
-
+      <button mat-flat-button class="addSpendingBtn" (click)="showAddSpendingBox()"><mat-icon>add</mat-icon></button>
+      <app-add-spending-box *ngIf="addSpendingBoxShowUp" [tripId]="tripId" class="addSpendingBox" [loggedUser$]="loggedUser$" [participants$]="participants$" (close)="hideAddSpendingBox()"></app-add-spending-box>
+      <app-spendings-list class="spendings" [spendings$]="spendings$" [participants$]="participants$"></app-spendings-list>
     </section>
   </div>
 </div>

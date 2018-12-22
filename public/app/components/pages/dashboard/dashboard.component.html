@@ -1,6 +1,6 @@
 <div class="tripList">
   <div class="newTrip" (click)="openAddTripDialog()"><mat-icon class="addTripIcon">add</mat-icon></div>
-  <div class="tripElement" *ngFor="let trip of trips"
+  <div class="tripElement" *ngFor="let trip of trips$ | async"
        (click)="onSelect(trip)">
     <div class="tripThumbnail">
       <img *ngIf="trip.coverPhoto; else noTripCover" src="{{trip.coverPhoto}}" alt="{{trip.name}}"/>

@@ -1,0 +1,3 @@
+<mat-accordion>
+  <app-spending-detail class="spending" *ngFor="let spending of spendings$ | async" [spending]="spending" [participants]="participants$ | async"></app-spending-detail>
+</mat-accordion>

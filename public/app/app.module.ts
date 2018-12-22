@@ -1,27 +1,22 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
 
-import {
-  MatButtonModule,
-  MatDialogModule,
-  MatIconModule,
-  MatInputModule,
-  MatMenuModule,
-  MatSidenavModule,
-  MatStepperModule
-} from '@angular/material';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { DashboardModule } from './components/pages/dashboard/dashboard.module';
+import { MatSidenavModule } from '@angular/material';
+import { RouterModule, Routes } from '@angular/router';
+import { SidebarModule } from './components/commons/sidebar/sidebar.module';
+import { StoreModule } from '@ngrx/store';
+import { TripAddDialogModule } from './components/commons/trip-add-dialog/trip-add-dialog.module';
+import { TripDetailModule } from './components/pages/trip-detail/trip-detail.module';
 
 import { AppComponent } from './app.component';
-import { DashboardComponent } from './components/pages/dashboard/dashboard.component';
-
-import { SidebarComponent } from './components/commons/sidebar/sidebar.component';
 import { TripAddDialogComponent } from './components/commons/trip-add-dialog/trip-add-dialog.component';
+import { DashboardComponent } from './components/pages/dashboard/dashboard.component';
 import { TripDetailComponent } from './components/pages/trip-detail/trip-detail.component';
-import { ImageCropperModule } from 'ngx-image-cropper';
+import { TripModule } from './trips/trip.module';
+import { EffectsModule } from '@ngrx/effects';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { UserModule } from './users/user.module';
+
 
 const routes: Routes = [
   {
@@ -41,32 +36,26 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [
-    AppComponent,
-    DashboardComponent,
-    SidebarComponent,
-    TripAddDialogComponent,
-    TripDetailComponent
+    AppComponent
   ],
   imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    FormsModule,
-    HttpClientModule,
-    ImageCropperModule,
-    MatButtonModule,
-    MatDialogModule,
-    MatIconModule,
-    MatInputModule,
-    MatMenuModule,
+    DashboardModule,
     MatSidenavModule,
-    MatStepperModule,
-    ReactiveFormsModule,
-    RouterModule.forRoot(routes)
+    RouterModule.forRoot(routes),
+    SidebarModule,
+    StoreModule.forRoot({}),
+    EffectsModule.forRoot([]),
+    StoreDevtoolsModule.instrument({
+      maxAge: 250 // Retains last 25 states
+    }),
+    TripModule,
+    TripAddDialogModule,
+    TripDetailModule,
+    UserModule
   ],
   entryComponents: [
     TripAddDialogComponent
   ],
-  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
