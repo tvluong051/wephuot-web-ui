@@ -34,7 +34,6 @@ export class AddSpendingBoxComponent implements OnInit, OnDestroy {
         this.addSpendingFormGroup = this._formBuilder.group({
             description: ['', Validators.required]
         });
-        // this.buildSharepartsControls();
         this.loggedUser$
             .pipe(
                 takeUntil(this.unsubscribed$)
@@ -77,7 +76,7 @@ export class AddSpendingBoxComponent implements OnInit, OnDestroy {
 
     buildSharepartsControls(participants: Users) {
         const controls = {};
-        participants.forEach(participant => controls[participant.userId] = 0);
+        participants.forEach(participant => controls[participant.userId] = '');
 
         return this._formBuilder.group(controls);
     }
@@ -87,6 +86,12 @@ export class AddSpendingBoxComponent implements OnInit, OnDestroy {
     }
 
     saveSpending() {
+        const shareparts = {};
+        const sharepartsRaw = this.addSpendingFormGroup.value.sharepartsFormGroup.shareparts;
+        Object.keys(sharepartsRaw)
+            .filter(key => sharepartsRaw[key] !== '')
+            .forEach(key => shareparts[key] = sharepartsRaw[key]);
+
         const spending = {
             description: this.addSpendingFormGroup.value.description,
             amount: this.addSpendingFormGroup.value.crediterFormGroup.amount,
@@ -95,10 +100,9 @@ export class AddSpendingBoxComponent implements OnInit, OnDestroy {
                 userId: this.addSpendingFormGroup.value.crediterFormGroup.crediterId,
             } as User,
             equallyDivided: this.addSpendingFormGroup.value.sharepartsFormGroup.equallyDivided,
-            shareparts: this.addSpendingFormGroup.value.sharepartsFormGroup.shareparts
+            shareparts: shareparts
 
         } as Spending;
-
         this.store.dispatch(new TripAddSpendingAction({
             tripId: this.tripId,
             spending: spending
