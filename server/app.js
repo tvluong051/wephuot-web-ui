@@ -24,6 +24,8 @@ const serverConfig = require("./server-config").getServerConfig();
 
 const PORT = serverConfig.port;
 const STATIC_FILE_PATH = serverConfig.staticFilePath;
+
+const HTTP_INTERNAL_ERROR_STATUS = 500;
 // Express server
 const app = express();
 
@@ -82,7 +84,11 @@ app.get('/logout', (req, res) => {
   res.redirect('/');
 });
 
-
+//TODO: To be removed once user api is implemented
+app.get('/api/user/userinfo', (req, res) => res.send({
+  userId: 'testId',
+  email: 'toto@toto.com'
+}));
 app.use('/api', proxy.router);
 
 const DIST_FOLDER = path.join(process.cwd(), 'dist');

@@ -32,8 +32,7 @@ import { SpendingDetailComponent } from './spending-detail.component';
     MatInputModule,
     MatNativeDateModule,
     MatSelectModule,
-    ReactiveFormsModule,
-
+    ReactiveFormsModule
   ],
   exports: [
     SpendingDetailComponent

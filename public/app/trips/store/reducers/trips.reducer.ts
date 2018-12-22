@@ -7,8 +7,8 @@ export function reducer(tripsState: Trips = [], action: Action) {
     case TripActionType.TRIP_FETCH_TRIPS_SUCCESS:
       const ftsa = action as TripFetchTripsSuccessAction;
 
-      ftsa.payload.trips.sort((t1, t2) => t2.lastModified - t1.lastModified);
-      return [...ftsa.payload.trips];
+      tripsState = [...ftsa.payload.trips];
+      break;
 
     case TripActionType.TRIP_FETCH_TRIP_DETAIL_SUCCESS:
       const ftdsa = action as TripFetchTripDetailSuccessAction;
@@ -16,8 +16,7 @@ export function reducer(tripsState: Trips = [], action: Action) {
 
       tripsState = tripsState.filter(trip => trip.tripId !== updatedTrip.tripId);
       tripsState.push(updatedTrip);
-      tripsState.sort((t1, t2) => t2.lastModified - t1.lastModified);
-      return tripsState;
+      break;
   }
   return tripsState;
 }

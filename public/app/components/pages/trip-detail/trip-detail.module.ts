@@ -5,6 +5,7 @@ import { MatButtonModule, MatIconModule } from '@angular/material';
 import { RouterModule } from '@angular/router';
 import { SpendingsListModule } from './spendings-list/spendings-list.module';
 import { TripDetailComponent } from './trip-detail.component';
+import { AddSpendingBoxModule } from './add-spending-box/add-spending-box.module';
 
 
 @NgModule({
@@ -12,6 +13,7 @@ import { TripDetailComponent } from './trip-detail.component';
     TripDetailComponent
   ],
   imports: [
+    AddSpendingBoxModule,
     BrowserModule,
     BrowserAnimationsModule,
     MatButtonModule,

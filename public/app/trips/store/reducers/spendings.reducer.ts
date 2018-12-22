@@ -1,5 +1,5 @@
 import { Action } from '@ngrx/store';
-import { SpendingActionType, TripFetchSpendingsSuccessAction } from '../actions/spending.action';
+import { SpendingActionType, TripFetchSpendingsSuccessAction, TripAddSpendingSuccessAction } from '../actions/spending.action';
 
 
 export function reducer(spendingsState = new Map(), action: Action) {
@@ -8,7 +8,12 @@ export function reducer(spendingsState = new Map(), action: Action) {
       const fssa = action as TripFetchSpendingsSuccessAction;
 
       spendingsState[fssa.payload.tripId] = fssa.payload.spendings;
-      return spendingsState;
+      break;
+    case SpendingActionType.TRIP_ADD_SPENDING_SUCCESS:
+      const assa = action as TripAddSpendingSuccessAction;
+
+      spendingsState[assa.payload.tripId].push(assa.payload.spending);
+      break;
   }
   return spendingsState;
 }

@@ -3,12 +3,13 @@ import { Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { Trip } from '../../../models/trip.model';
 import { Spendings } from '../../../models/spending.model';
-import { Users } from '../../../models/user.model';
+import { Users, User } from '../../../models/user.model';
 import { Observable } from 'rxjs';
 import { select, Store } from '@ngrx/store';
 import { getTripStateById, getSpendingsStateByTripId, getParticipantsStateByTripId } from '../../../trips/store/reducers';
 import { TripFetchTripDetailAction } from 'public/app/trips/store/actions/trip.action';
 import { TripFetchSpendingsAction } from 'public/app/trips/store/actions/spending.action';
+import { getLoggedUser } from 'public/app/users/store/reducers';
 
 @Component({
   selector: 'app-trip-detail',
@@ -20,6 +21,9 @@ export class TripDetailComponent implements OnInit {
   trip$: Observable<Trip>;
   spendings$: Observable<Spendings>;
   participants$: Observable<Users>;
+  loggedUser$: Observable<User>;
+  tripId: string;
+  addSpendingBoxShowUp = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -32,34 +36,45 @@ export class TripDetailComponent implements OnInit {
   }
 
   getTripDetail(): void {
-    const tripId = this.route.snapshot.paramMap.get('tripId');
+    this.tripId = this.route.snapshot.paramMap.get('tripId');
 
     this.trip$ = this.store.pipe(
       select(getTripStateById, {
-        tripId: tripId
+        tripId: this.tripId
       })
     );
     this.participants$ = this.store.pipe(
       select(getParticipantsStateByTripId, {
-        tripId: tripId
+        tripId: this.tripId
       })
     );
     this.spendings$ = this.store.pipe(
       select(getSpendingsStateByTripId, {
-        tripId: tripId
+        tripId: this.tripId
       })
+    );
+    this.loggedUser$ = this.store.pipe(
+      select(getLoggedUser)
     );
 
     this.store.dispatch(new TripFetchTripDetailAction({
-      tripId: tripId
+      tripId: this.tripId
     }));
 
     this.store.dispatch(new TripFetchSpendingsAction({
-      tripId: tripId
+      tripId: this.tripId
     }));
   }
 
-  goBack(): void {
+  showAddSpendingBox() {
+    this.addSpendingBoxShowUp = true;
+  }
+
+  hideAddSpendingBox() {
+    this.addSpendingBoxShowUp = false;
+  }
+
+  goBack() {
     this.location.back();
   }
 

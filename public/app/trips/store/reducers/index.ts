@@ -34,5 +34,5 @@ export const getSpendingsStateByTripId = createSelector(
 
 export const getParticipantsStateByTripId = createSelector(
   getUserTripsState,
-  (trips: Trips, props: {tripId: string}) => trips.find(trip => trip.tripId === props.tripId).participants
+  (trips: Trips, props: {tripId: string}) => trips.length > 0 ? trips.find(trip => trip.tripId === props.tripId).participants : []
 );

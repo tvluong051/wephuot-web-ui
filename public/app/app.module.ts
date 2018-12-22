@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 
 import { DashboardModule } from './components/pages/dashboard/dashboard.module';
-import { HttpClientModule } from '@angular/common/http';
 import { MatSidenavModule } from '@angular/material';
 import { RouterModule, Routes } from '@angular/router';
 import { SidebarModule } from './components/commons/sidebar/sidebar.module';
@@ -16,6 +15,7 @@ import { TripDetailComponent } from './components/pages/trip-detail/trip-detail.
 import { TripModule } from './trips/trip.module';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { UserModule } from './users/user.module';
 
 
 const routes: Routes = [
@@ -40,7 +40,6 @@ const routes: Routes = [
   ],
   imports: [
     DashboardModule,
-    HttpClientModule,
     MatSidenavModule,
     RouterModule.forRoot(routes),
     SidebarModule,
@@ -51,7 +50,8 @@ const routes: Routes = [
     }),
     TripModule,
     TripAddDialogModule,
-    TripDetailModule
+    TripDetailModule,
+    UserModule
   ],
   entryComponents: [
     TripAddDialogComponent

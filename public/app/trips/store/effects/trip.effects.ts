@@ -15,7 +15,7 @@ import {
   TripValidateTripErrorAction,
   TripSaveTripErrorAction
 } from '../actions/trip.action';
-import { catchError, map, mergeMap, tap} from 'rxjs/operators';
+import { catchError, map, tap, switchMap} from 'rxjs/operators';
 import { Trip, Trips } from '../../../models/trip.model';
 import * as url from 'url';
 
@@ -28,7 +28,7 @@ export class TripEffects {
   @Effect()
   fetchTrips$: Observable<Action> = this.actions$.pipe(
     ofType(TripActionType.TRIP_FETCH_TRIPS),
-    mergeMap((action: TripFetchTripsAction) =>
+    switchMap((action: TripFetchTripsAction) =>
       this.httpClient.get(this.tripsApiUrl, {
         headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
         params: {
@@ -51,7 +51,7 @@ export class TripEffects {
   @Effect()
   fetchTripDetail$: Observable<Action> = this.actions$.pipe(
     ofType(TripActionType.TRIP_FETCH_TRIP_DETAIL),
-    mergeMap((action: TripFetchTripDetailAction) =>
+    switchMap((action: TripFetchTripDetailAction) =>
       this.httpClient.get(`${this.tripsApiUrl}/trip/${action.payload.tripId}`, {
         headers: new HttpHeaders({ 'Content-Type': 'application/json' })
       }).pipe(
@@ -67,7 +67,7 @@ export class TripEffects {
   @Effect()
   saveTrip$: Observable<Action> = this.actions$.pipe(
     ofType(TripActionType.TRIP_SAVE_TRIP),
-    mergeMap((action: TripSaveTripAction) =>
+    switchMap((action: TripSaveTripAction) =>
       this.httpClient.post(`${this.tripsApiUrl}/trip`, action.payload.trip, {
         headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
         responseType: 'text' as 'json'
@@ -95,7 +95,7 @@ export class TripEffects {
   @Effect()
   addParticipants$: Observable<Action> = this.actions$.pipe(
     ofType(TripActionType.TRIP_ADD_PARTICIPANTS),
-    mergeMap((action: TripAddParticipantsAction) =>
+    switchMap((action: TripAddParticipantsAction) =>
       this.httpClient.post(`${this.tripsApiUrl}/trip/${action.payload.tripId}/participants`, action.payload.users, {
         headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
         responseType: 'text' as 'json'
@@ -117,7 +117,7 @@ export class TripEffects {
   @Effect()
   validateTrip$: Observable<Action> = this.actions$.pipe(
     ofType(TripActionType.TRIP_VALIDATE_TRIP),
-    mergeMap((action: TripValidateTripAction) =>
+    switchMap((action: TripValidateTripAction) =>
       this.httpClient.put(`${this.tripsApiUrl}/trip/${action.payload.tripId}`, null, {
         headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
         responseType: 'text' as 'json'
