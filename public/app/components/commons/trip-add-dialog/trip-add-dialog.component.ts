@@ -1,14 +1,14 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef } from '@angular/material';
 import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component';
 import { Trip } from '../../../models/trip.model';
 import { User } from '../../../models/user.model';
 import { Store, select } from '@ngrx/store';
 import { TripSaveTripAction } from 'public/app/trips/store/actions/trip.action';
 import { getLoggedUser } from 'public/app/users/store/reducers';
-import { map, tap, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 export interface TripAddDialogData {

@@ -61,7 +61,7 @@
   </form>
   <mat-action-row class="actionRow">
     <button mat-icon-button class="cancelBtn" (click)="resetForm()"><mat-icon>cancel</mat-icon></button>
-    <button mat-icon-button class="deleteBtn"><mat-icon>delete</mat-icon></button>
-    <button mat-icon-button class="saveBtn"><mat-icon>save</mat-icon></button>
+    <button mat-icon-button class="deleteBtn" (click)="deleteSpending()"><mat-icon>delete</mat-icon></button>
+    <button mat-icon-button class="saveBtn" (click)="updateSpending()"><mat-icon>save</mat-icon></button>
   </mat-action-row>
 </mat-expansion-panel>

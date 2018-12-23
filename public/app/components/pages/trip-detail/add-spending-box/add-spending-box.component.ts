@@ -89,7 +89,7 @@ export class AddSpendingBoxComponent implements OnInit, OnDestroy {
         const shareparts = {};
         const sharepartsRaw = this.addSpendingFormGroup.value.sharepartsFormGroup.shareparts;
         Object.keys(sharepartsRaw)
-            .filter(key => sharepartsRaw[key] !== '')
+            .filter(key => sharepartsRaw[key] !== '' && sharepartsRaw[key] !== 0)
             .forEach(key => shareparts[key] = sharepartsRaw[key]);
 
         const spending = {

@@ -10,6 +10,9 @@ import { Observable } from 'rxjs';
 })
 export class SpendingsListComponent implements OnInit {
   @Input()
+  tripId: string;
+
+  @Input()
   spendings$: Observable<Spendings>;
 
   @Input()
