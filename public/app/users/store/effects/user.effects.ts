@@ -3,8 +3,15 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Observable, of } from 'rxjs';
 import { Action } from '@ngrx/store';
-import { UserActionType, UserLoggedUserInfoSuccessAction, UserLoggedUserInfoErrorAction } from '../actions/user.action';
-import { mergeMap, tap, map, catchError } from 'rxjs/operators';
+import {
+    UserActionType,
+    UserLoggedUserInfoSuccessAction,
+    UserLoggedUserInfoErrorAction,
+    UserFetchUserDetailAction,
+    UserFetchUserDetailErrorAction,
+    UserFetchUserDetailSuccessAction
+} from '../actions/user.action';
+import { tap, map, catchError, switchMap } from 'rxjs/operators';
 import { User } from 'public/app/models/user.model';
 
 @Injectable()
@@ -16,7 +23,7 @@ export class UserEffects {
     @Effect()
     userinfo$: Observable<Action> = this.actions$.pipe(
         ofType(UserActionType.USER_LOGGED_USERINFO),
-        mergeMap(() =>
+        switchMap(() =>
             this.httpClient.get(`${this.userApiUrl}/userinfo`, {
                 headers: new HttpHeaders({ 'Content-Type': 'application/json' })
             }).pipe(
@@ -24,6 +31,22 @@ export class UserEffects {
                 map(user => new UserLoggedUserInfoSuccessAction({user: user as User})),
                 catchError(() => of(new UserLoggedUserInfoErrorAction()))
 
+            )
+        )
+    );
+
+    @Effect()
+    fetchUserDetail$: Observable<Action> = this.actions$.pipe(
+        ofType(UserActionType.USER_FETCH_USER_DETAIL),
+        switchMap((action: UserFetchUserDetailAction) =>
+            this.httpClient.get(`${this.userApiUrl}/persons/person/${action.payload.userId}`, {
+                headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+            }).pipe(
+                tap(() => console.log(`Get detail for user id = ${action.payload.userId}`)),
+                map(user => new UserFetchUserDetailSuccessAction({
+                    user: user as User
+                })),
+                catchError(() => of(new UserFetchUserDetailErrorAction()))
             )
         )
     );

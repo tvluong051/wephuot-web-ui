@@ -53,7 +53,8 @@ app.use(session({
   name: 'wephuot',
   proxy: true,
   resave: true,
-  saveUninitialized: true
+  saveUninitialized: true,
+  unset: 'destroy'
 }));
 
 passport = passportConfig.configurePassportStrategy();
@@ -68,7 +69,10 @@ app.listen(PORT, () => console.log('Server is listening on: ' + PORT));
  *****************************************************************************/
 
 // Login route redirect to predix uaa login page
-app.get(serverConfig.auth.loginUrl, passport.authenticate(serverConfig.provider));
+
+app.get(serverConfig.auth.loginUrl, passport.authenticate(serverConfig.provider, {
+  scope: ['email', 'user_friends'],
+}));
 
   // Callback route redirects to secure route after login
 app.get(serverConfig.auth.callbackUrl, passport.authenticate(serverConfig.provider, {
@@ -85,18 +89,17 @@ app.get('/logout', (req, res) => {
 });
 
 //TODO: To be removed once user api is implemented
-app.get('/api/user/userinfo', (req, res) => res.send({
-  userId: 'testId',
-  email: 'toto@toto.com'
-}));
-app.use('/api', proxy.router);
+app.get('/api/user/userinfo', mainAuthenticate(), (req, res) => {
+  res.send(req.user.user);
+});
+app.use('/api', mainAuthenticate({noRedirect: true}), proxy.router);
 
 const DIST_FOLDER = path.join(process.cwd(), 'dist');
 
-app.use(express.static(path.join(DIST_FOLDER, 'public')));
-app.use('/staticFile', express.static(STATIC_FILE_PATH));
+app.use(mainAuthenticate(), express.static(path.join(DIST_FOLDER, 'public')));
+app.use('/staticFile', mainAuthenticate(), express.static(STATIC_FILE_PATH));
 
-app.use('/', (req, res) => res.sendFile(path.join(DIST_FOLDER, '/public/index.html'))) ;
+app.use('/', mainAuthenticate(), (req, res) => res.sendFile(path.join(DIST_FOLDER, '/public/index.html'))) ;
 
 /****************************************************************************
  ERROR HANDLERS
