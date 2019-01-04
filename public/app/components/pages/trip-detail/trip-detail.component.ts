@@ -10,72 +10,79 @@ import { getTripStateById, getSpendingsStateByTripId, getParticipantsStateByTrip
 import { TripFetchTripDetailAction } from 'public/app/trips/store/actions/trip.action';
 import { TripFetchSpendingsAction } from 'public/app/trips/store/actions/spending.action';
 import { getLoggedUser } from 'public/app/users/store/reducers';
+import { map } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-trip-detail',
-  templateUrl: './trip-detail.component.html',
-  styleUrls: ['./trip-detail.component.scss']
+    selector: 'app-trip-detail',
+    templateUrl: './trip-detail.component.html',
+    styleUrls: ['./trip-detail.component.scss']
 })
 export class TripDetailComponent implements OnInit {
 
-  trip$: Observable<Trip>;
-  spendings$: Observable<Spendings>;
-  participants$: Observable<Users>;
-  loggedUser$: Observable<User>;
-  tripId: string;
-  addSpendingBoxShowUp = false;
+    trip$: Observable<Trip>;
+    spendings$: Observable<Spendings>;
+    participants$: Observable<Users>;
+    loggedUser$: Observable<User>;
+    tripId: string;
+    addSpendingBoxShowUp = false;
 
-  constructor(
-    private route: ActivatedRoute,
-    private store: Store<any>,
-    private location: Location
-  ) {}
+    constructor(
+        private route: ActivatedRoute,
+        private store: Store<any>,
+        private location: Location
+    ) {}
 
-  ngOnInit(): void {
-    this.getTripDetail();
-  }
+    ngOnInit(): void {
+        this.getTripDetail();
+    }
 
-  getTripDetail(): void {
-    this.tripId = this.route.snapshot.paramMap.get('tripId');
+    getTripDetail(): void {
+        this.tripId = this.route.snapshot.paramMap.get('tripId');
 
-    this.trip$ = this.store.pipe(
-      select(getTripStateById, {
-        tripId: this.tripId
-      })
-    );
-    this.participants$ = this.store.pipe(
-      select(getParticipantsStateByTripId, {
-        tripId: this.tripId
-      })
-    );
-    this.spendings$ = this.store.pipe(
-      select(getSpendingsStateByTripId, {
-        tripId: this.tripId
-      })
-    );
-    this.loggedUser$ = this.store.pipe(
-      select(getLoggedUser)
-    );
+        this.trip$ = this.store.pipe(
+            select(getTripStateById, {
+                tripId: this.tripId
+            })
+        );
+        this.participants$ = this.store.pipe(
+            select(getParticipantsStateByTripId, {
+                tripId: this.tripId
+            })
+        );
+        this.spendings$ = this.store.pipe(
+            select(getSpendingsStateByTripId, {
+                tripId: this.tripId
+            }),
+            map(spendings => {
+                if (spendings) {
+                    spendings.sort((s1, s2) => s2.spentDate - s1.spentDate);
+                }
+                return spendings;
+            })
+        );
+        this.loggedUser$ = this.store.pipe(
+            select(getLoggedUser)
+        );
 
-    this.store.dispatch(new TripFetchTripDetailAction({
-      tripId: this.tripId
-    }));
+        this.store.dispatch(new TripFetchTripDetailAction({
+            tripId: this.tripId
+        }));
 
-    this.store.dispatch(new TripFetchSpendingsAction({
-      tripId: this.tripId
-    }));
-  }
+        this.store.dispatch(new TripFetchSpendingsAction({
+            tripId: this.tripId
+        }));
+    }
 
-  showAddSpendingBox() {
-    this.addSpendingBoxShowUp = true;
-  }
+    showAddSpendingBox() {
+        this.addSpendingBoxShowUp = true;
+    }
 
-  hideAddSpendingBox() {
-    this.addSpendingBoxShowUp = false;
-  }
+    hideAddSpendingBox() {
+        this.addSpendingBoxShowUp = false;
+    }
 
-  goBack() {
-    this.location.back();
-  }
+    goBack() {
+        this.location.back();
+    }
 
 }

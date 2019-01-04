@@ -1,0 +1,29 @@
+.dialogContainer {
+    .confirmQuestion {
+        margin-bottom: 1.5rem;
+    }
+
+    .buttonsRow {
+        display: flex;
+        justify-content: flex-end;
+        padding-top: 1.5rem;
+        border-top: 1px solid rgba(0, 0, 0, .12);
+        
+        button {
+            margin-left: 2rem;
+            color: white;
+
+            .customIcon {
+                margin-right: 0.5rem;
+            }
+            
+            &.yesBtn {
+                background-color: #3498DB;
+            }
+
+            &.noBtn {
+                background-color: #E74C3C;
+            }
+        }
+    }
+}

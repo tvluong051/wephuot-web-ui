@@ -12,7 +12,10 @@ import { SpendingActionType,
   TripAddSpendingErrorAction,
   TripUpdateSpendingAction,
   TripUpdateSpendingSuccessAction,
-  TripUpdateSpendingErrorAction
+  TripUpdateSpendingErrorAction,
+  TripDeleteSpendingAction,
+  TripDeleteSpendingSuccessAction,
+  TripDeleteSpendingErrorAction
 } from '../actions/spending.action';
 import { switchMap, catchError, tap, map } from 'rxjs/operators';
 import { Spendings, Spending } from 'public/app/models/spending.model';
@@ -71,14 +74,38 @@ export class SpendingEffects {
     saveSpending$: Observable<Action> = this.actions$.pipe(
         ofType(SpendingActionType.TRIP_UPDATE_SPENDING),
         switchMap((action: TripUpdateSpendingAction) =>
-            this.httpClient.put(`${this.spendingsApiUrl}/spending/${action.payload.spending.id}`, {}, {
+            this.httpClient.put(`${this.spendingsApiUrl}/spending/${action.payload.spending.id}`, {
+                id: action.payload.spending.id,
+                description: action.payload.spending.description,
+                amount: action.payload.spending.amount,
+                spentDate: action.payload.spending.spentDate,
+                crediter: action.payload.spending.crediter.userId,
+                equallyDivided: action.payload.spending.equallyDivided,
+                shareparts: action.payload.spending.shareparts
+            },
+            {
                 headers: new HttpHeaders({ 'Content-Type': 'application/json' })
             }).pipe(
                 tap(() => console.log(`Update spending id = ${action.payload.spending.id}`)),
                 map(spending => new TripUpdateSpendingSuccessAction({
+                    tripId: action.payload.tripId,
                     spending: spending as Spending
                 })),
                 catchError(() => of(new TripUpdateSpendingErrorAction()))
+            )
+        )
+    );
+
+    @Effect()
+    deleteSpending$: Observable<Action> = this.actions$.pipe(
+        ofType(SpendingActionType.TRIP_DELETE_SPENDING),
+        switchMap((action: TripDeleteSpendingAction) =>
+            this.httpClient.delete(`${this.spendingsApiUrl}/spending/${action.payload.spendingId}`, {
+                headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+            }).pipe(
+                tap(() => console.log(`Delete spending id = ${action.payload.spendingId}`)),
+                map(() => new TripDeleteSpendingSuccessAction(action.payload)),
+                catchError(() => of(new TripDeleteSpendingErrorAction()))
             )
         )
     );

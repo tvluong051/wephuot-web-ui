@@ -21,7 +21,7 @@
     <section class="rightContainer">
       <button mat-flat-button class="addSpendingBtn" (click)="showAddSpendingBox()"><mat-icon>add</mat-icon></button>
       <app-add-spending-box *ngIf="addSpendingBoxShowUp" [tripId]="tripId" class="addSpendingBox" [loggedUser$]="loggedUser$" [participants$]="participants$" (close)="hideAddSpendingBox()"></app-add-spending-box>
-      <app-spendings-list class="spendings" [spendings$]="spendings$" [participants$]="participants$"></app-spendings-list>
+      <app-spendings-list class="spendings" [tripId]="tripId" [spendings$]="spendings$" [participants$]="participants$"></app-spendings-list>
     </section>
   </div>
 </div>

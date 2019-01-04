@@ -13,6 +13,7 @@ import {
   MatSelectModule
 } from '@angular/material';
 import { SpendingDetailComponent } from './spending-detail.component';
+import { ConfirmDialogModule } from '../../../commons/confirm-dialog/confirm-dialog.module';
 
 
 
@@ -21,6 +22,7 @@ import { SpendingDetailComponent } from './spending-detail.component';
     SpendingDetailComponent
   ],
   imports: [
+    ConfirmDialogModule,
     BrowserModule,
     BrowserAnimationsModule,
     FormsModule,
