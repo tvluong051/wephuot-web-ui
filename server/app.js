@@ -88,8 +88,7 @@ app.get('/logout', (req, res) => {
   res.redirect('/');
 });
 
-//TODO: To be removed once user api is implemented
-app.get('/api/user/userinfo', mainAuthenticate(), (req, res) => {
+/* app.get('/userinfo', mainAuthenticate(), (req, res) => {
   res.send(req.user.user);
 });
 app.use('/api', mainAuthenticate({noRedirect: true}), proxy.router);
@@ -99,7 +98,19 @@ const DIST_FOLDER = path.join(process.cwd(), 'dist');
 app.use(mainAuthenticate(), express.static(path.join(DIST_FOLDER, 'public')));
 app.use('/staticFile', mainAuthenticate(), express.static(STATIC_FILE_PATH));
 
-app.use('/', mainAuthenticate(), (req, res) => res.sendFile(path.join(DIST_FOLDER, '/public/index.html'))) ;
+app.use('/', mainAuthenticate(), (req, res) => res.sendFile(path.join(DIST_FOLDER, '/public/index.html'))); */
+
+app.get('/userinfo', (req, res) => {
+  res.send(req.user.user);
+});
+app.use('/api', proxy.router);
+
+const DIST_FOLDER = path.join(process.cwd(), 'dist');
+
+app.use(express.static(path.join(DIST_FOLDER, 'public')));
+app.use('/staticFile', express.static(STATIC_FILE_PATH));
+
+app.use('/', (req, res) => res.sendFile(path.join(DIST_FOLDER, '/public/index.html')));
 
 /****************************************************************************
  ERROR HANDLERS

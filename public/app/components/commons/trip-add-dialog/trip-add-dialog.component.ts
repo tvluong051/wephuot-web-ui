@@ -1,15 +1,16 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { MatDialogRef } from '@angular/material';
 import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component';
 import { Trip } from '../../../models/trip.model';
-import { User } from '../../../models/user.model';
+import { User, Users } from '../../../models/user.model';
 import { Store, select } from '@ngrx/store';
 import { TripSaveTripAction } from 'public/app/trips/store/actions/trip.action';
-import { getLoggedUser } from 'public/app/users/store/reducers';
-import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { getLoggedUser, getUserSearchResults } from 'public/app/users/store/reducers';
+import { takeUntil, debounceTime, tap, switchMap } from 'rxjs/operators';
+import { Subject, Observable } from 'rxjs';
+import { UserSearchUserAction } from 'public/app/users/store/actions/user.action';
 
 export interface TripAddDialogData {
   newTrip: Trip;
@@ -19,15 +20,18 @@ export interface TripAddDialogData {
 @Component({
   selector: 'app-trip-add-dialog',
   templateUrl: './trip-add-dialog.component.html',
-  styleUrls: ['./trip-add-dialog.component.scss']
+  styleUrls: ['./trip-add-dialog.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class TripAddDialogComponent implements OnInit, OnDestroy {
 
   tripCreationFormGroup: FormGroup;
+  userSearchResult$: Observable<Users>;
 
   imageChangedEvent: any = '';
   croppedImage: any = '';
   private unsubscribed$ = new Subject();
+  buddies: Users = [];
 
   constructor(
     public dialogRef: MatDialogRef<TripAddDialogComponent>,
@@ -41,14 +45,47 @@ export class TripAddDialogComponent implements OnInit, OnDestroy {
         tripDescription: ''
       }),
       participantsFormGroup: this._formBuilder.group({
-        test: ''
+        userInput: ''
       })
     });
+
+    this.tripCreationFormGroup
+      .get('participantsFormGroup')
+      .get('userInput')
+      .valueChanges
+      .pipe(
+        debounceTime(300),
+        takeUntil(this.unsubscribed$)
+      ).subscribe(value => {
+        if (value) {
+          this.store.dispatch(new UserSearchUserAction({
+            searchTerm: value
+          }));
+        }
+      });
+
+    this.userSearchResult$ = this.store.pipe(
+      select(getUserSearchResults),
+      takeUntil(this.unsubscribed$)
+    );
   }
 
   ngOnDestroy() {
     this.unsubscribed$.next();
     this.unsubscribed$.complete();
+  }
+
+  addParticipant(user: User) {
+    const found = this.buddies.find(buddy => buddy.userId === user.userId);
+    if (!found) {
+      this.buddies.push(user);
+    }
+    console.log(this.buddies);
+  }
+
+  removeParticipant(user: User) {
+    this.buddies = this.buddies.filter(buddy => buddy.userId !== user.userId);
+    console.log(this.buddies);
   }
 
   saveTrip(validate = false): void {
@@ -61,10 +98,14 @@ export class TripAddDialogComponent implements OnInit, OnDestroy {
       select(getLoggedUser),
       takeUntil(this.unsubscribed$)
     ).subscribe(loggedUser => {
+      const me = loggedUser as User;
+      const friends = this.buddies.filter(buddy => buddy.userId !== me.userId);
+
       this.store.dispatch(new TripSaveTripAction({
         trip: trip,
         users: [
-          loggedUser as User
+          ...friends,
+          me
         ],
         validate: validate
       }));

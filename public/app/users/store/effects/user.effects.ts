@@ -9,10 +9,12 @@ import {
     UserLoggedUserInfoErrorAction,
     UserFetchUserDetailAction,
     UserFetchUserDetailErrorAction,
-    UserFetchUserDetailSuccessAction
+    UserFetchUserDetailSuccessAction,
+    UserSearchUserAction,
+    UserSearchUserSuccessAction
 } from '../actions/user.action';
 import { tap, map, catchError, switchMap } from 'rxjs/operators';
-import { User } from 'public/app/models/user.model';
+import { User, UserSearchResult } from 'public/app/models/user.model';
 
 @Injectable()
 export class UserEffects {
@@ -24,7 +26,7 @@ export class UserEffects {
     userinfo$: Observable<Action> = this.actions$.pipe(
         ofType(UserActionType.USER_LOGGED_USERINFO),
         switchMap(() =>
-            this.httpClient.get(`${this.userApiUrl}/userinfo`, {
+            this.httpClient.get(`/userinfo`, {
                 headers: new HttpHeaders({ 'Content-Type': 'application/json' })
             }).pipe(
                 tap(() => console.log('Get userinfo of logged user')),
@@ -47,6 +49,24 @@ export class UserEffects {
                     user: user as User
                 })),
                 catchError(() => of(new UserFetchUserDetailErrorAction()))
+            )
+        )
+    );
+
+    @Effect()
+    searchUser$: Observable<Action> = this.actions$.pipe(
+        ofType(UserActionType.USER_SEARCH_USER),
+        switchMap((action: UserSearchUserAction) =>
+            this.httpClient.get(`${this.userApiUrl}/persons/search`, {
+                headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+                params: {
+                    term: action.payload.searchTerm
+                }
+            }).pipe(
+                tap(() => `Search user with searching term = ${action.payload.searchTerm}`),
+                map(results => new UserSearchUserSuccessAction({
+                    result: (results as UserSearchResult).results
+                }))
             )
         )
     );

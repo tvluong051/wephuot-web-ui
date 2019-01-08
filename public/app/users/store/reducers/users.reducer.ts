@@ -1,5 +1,10 @@
 import { Action } from '@ngrx/store';
-import { UserActionType, UserLoggedUserInfoSuccessAction, UserFetchUserDetailSuccessAction } from '../actions/user.action';
+import {
+    UserActionType,
+    UserLoggedUserInfoSuccessAction,
+    UserFetchUserDetailSuccessAction,
+    UserSearchUserSuccessAction
+} from '../actions/user.action';
 import { User, Users } from 'public/app/models/user.model';
 
 export function loggerUserReducer(state: User = null, action: Action) {
@@ -25,4 +30,14 @@ export function tripBuddiesReducer(state: Users = [], action: Action) {
     return [
         ...state
     ];
+}
+
+export function searchReducer(state: Users = [], action: Action) {
+    switch (action.type) {
+        case UserActionType.USER_SEARCH_USER_SUCCESS:
+            const susa = action as UserSearchUserSuccessAction;
+
+            return susa.payload.result;
+    }
+    return state;
 }

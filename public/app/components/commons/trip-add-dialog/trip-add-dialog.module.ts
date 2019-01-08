@@ -3,7 +3,14 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ImageCropperModule } from 'ngx-image-cropper';
-import { MatButtonModule, MatDialogModule, MatIconModule, MatInputModule, MatStepperModule } from '@angular/material';
+import {
+  MatButtonModule,
+  MatDialogModule,
+  MatIconModule,
+  MatInputModule,
+  MatStepperModule,
+  MatAutocompleteModule
+} from '@angular/material';
 import { TripAddDialogComponent } from './trip-add-dialog.component';
 
 
@@ -16,6 +23,7 @@ import { TripAddDialogComponent } from './trip-add-dialog.component';
     BrowserAnimationsModule,
     FormsModule,
     ImageCropperModule,
+    MatAutocompleteModule,
     MatButtonModule,
     MatDialogModule,
     MatIconModule,

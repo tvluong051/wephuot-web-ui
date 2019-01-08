@@ -18,12 +18,12 @@
         <div class="crediterInputWrapper">
           <div class="crediterInputLabel">Crediter: </div>
           <div class="crediterInput input">
-            <img class="participantAvatar" *ngIf="spending.crediter.profilePic; else noCrediterAvatar" src="{{spending.crediter.profilePic}}" alt="{{spending.crediter.name}}"/>
-            <ng-template #noCrediterAvatar><img class="participantAvatar" src="assets/img/defaultAvatar.jpg" alt="{{spending.crediter.name}}"/></ng-template>
+            <img class="participantAvatar" *ngIf="spending.crediter.profilePic; else noCrediterAvatar" src="{{spending.crediter.profilePic}}" alt="{{spending.crediter.displayName}}"/>
+            <ng-template #noCrediterAvatar><img class="participantAvatar" src="assets/img/defaultAvatar.jpg" alt="{{spending.crediter.displayName}}"/></ng-template>
             <mat-select placeholder="Crediter" panelClass="crediterList" formControlName="crediterId" disableOptionCentering>
               <mat-option *ngFor="let participant of participants" [value]="participant.userId" class="crediterOption">
-                <img class="participantAvatar" *ngIf="participant.profilePic; else noProfilPic" src="{{participant.profilePic}}" alt="{{participant.name}}"/>
-                <ng-template #noProfilPic><img class="participantAvatar" src="assets/img/defaultAvatar.jpg" alt="{{participant.name}}"/></ng-template>
+                <img class="participantAvatar" *ngIf="participant.profilePic; else noProfilPic" src="{{participant.profilePic}}" alt="{{participant.displayName}}"/>
+                <ng-template #noProfilPic><img class="participantAvatar" src="assets/img/defaultAvatar.jpg" alt="{{participant.displayName}}"/></ng-template>
               </mat-option>
             </mat-select>
           </div>
@@ -49,8 +49,8 @@
       </div>
       <div class="section-form" formGroupName="sharepartsFormGroup">
         <div class="sharepart" formGroupName="shareparts" *ngFor="let participant of participants">
-          <img class="participantAvatar" *ngIf="participant.profilePic; else noProfilPic" src="{{participant.profilePic}}" alt="{{participant.name}}"/>
-          <ng-template #noProfilPic><img class="participantAvatar" src="assets/img/defaultAvatar.jpg" alt="{{participant.name}}"/></ng-template>
+          <img class="participantAvatar" *ngIf="participant.profilePic; else noProfilPic" src="{{participant.profilePic}}" alt="{{participant.displayName}}"/>
+          <ng-template #noProfilPic><img class="participantAvatar" src="assets/img/defaultAvatar.jpg" alt="{{participant.displayName}}"/></ng-template>
           <mat-form-field class="sharepartAmountInput">
             <input matInput placeholder="Amount" type="number" [formControlName]="participant.userId">
             <span matPrefix>$&nbsp;</span>
