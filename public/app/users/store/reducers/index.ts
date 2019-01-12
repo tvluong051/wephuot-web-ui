@@ -25,3 +25,19 @@ export const getUserSearchResults = createSelector(
     getUsersState,
     (state: UsersState) => state.searchResults
 );
+
+export const getUsersDetails = createSelector(
+    getUsersState,
+    (state: UsersState, props: {usersIds: string[]}) => {
+        const users: Users = [];
+        props.usersIds.forEach(userId => {
+            if (state.loggedUser.userId === userId) {
+                users.push(state.loggedUser);
+            } else {
+                users.push(state.tripBuddies.find(buddy => buddy.userId === userId));
+            }
+        });
+        return users;
+
+    }
+);

@@ -9,7 +9,7 @@ import { Trip, Trips, TripStatus } from '../../../models/trip.model';
 import { Observable, Subject } from 'rxjs';
 import { select, Store } from '@ngrx/store';
 import { getUserTripsState } from '../../../trips/store/reducers';
-import { TripFetchTripsAction } from 'public/app/trips/store/actions/trip.action';
+import { TripFetchTripsAction, TripValidateTripAction } from 'public/app/trips/store/actions/trip.action';
 import { User } from 'public/app/models/user.model';
 import { getLoggedUser } from 'public/app/users/store/reducers';
 import { takeUntil, map } from 'rxjs/operators';
@@ -73,6 +73,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
                     takeUntil(this.unsubscribed$)
                 ).subscribe(answer => {
                     if (answer) {
+                        this.store.dispatch(new TripValidateTripAction({tripId: selectedTrip.tripId}));
                         this.router.navigate(['trip', selectedTrip.tripId]);
                     }
                 });

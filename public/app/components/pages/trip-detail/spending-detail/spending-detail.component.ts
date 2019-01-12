@@ -6,8 +6,8 @@ import { Store } from '@ngrx/store';
 import { TripUpdateSpendingAction, TripDeleteSpendingAction } from 'public/app/trips/store/actions/spending.action';
 import { MatDialog } from '@angular/material';
 import { ConfirmDialogComponent } from 'public/app/components/commons/confirm-dialog/confirm-dialog.component';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subject, Subscription } from 'rxjs';
+import { takeUntil, debounceTime } from 'rxjs/operators';
 
 @Component({
     selector: 'app-spending-detail',
@@ -26,6 +26,9 @@ export class SpendingDetailComponent implements OnInit, OnDestroy {
     @Input()
     spending: Spending;
 
+    crediter: User;
+    private crediterValueChange$: Subscription;
+
     spendingFormGroup: FormGroup;
     private unsubscribed$ = new Subject();
 
@@ -41,7 +44,31 @@ export class SpendingDetailComponent implements OnInit, OnDestroy {
     }
 
     resetForm() {
+        this.crediter = this.spending.crediter;
+        const crediter = this.participants.find(participant => participant.userId === this.spending.crediter.userId);
+        if (crediter) {
+            this.crediter = crediter;
+        }
+        if (this.crediterValueChange$) {
+            this.crediterValueChange$.unsubscribe();
+        }
+
         this.spendingFormGroup = this.buildSpendingFormGroup(this.spending, this.participants);
+        this.crediterValueChange$ = this.spendingFormGroup
+            .get('crediterFormGroup')
+            .get('crediterId')
+            .valueChanges
+            .pipe(
+                debounceTime(300),
+                takeUntil(this.unsubscribed$)
+            ).subscribe(value => {
+                if (value) {
+                    const newCrediter = this.participants.find(participant => participant.userId === value);
+                    if (newCrediter) {
+                        this.crediter = newCrediter;
+                    }
+                }
+            });
     }
 
     buildSpendingFormGroup(spending: Spending, participants: Users): FormGroup {
