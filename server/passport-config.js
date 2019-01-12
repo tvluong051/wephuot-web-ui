@@ -6,6 +6,7 @@
 
 const config = require('./server-config').getServerConfig();
 const passport = require('passport');
+const request = require('request-promise');
 const FacebookStrategy = require('passport-facebook').Strategy;
 let fbStrategy;
 
@@ -30,16 +31,38 @@ function configurePassportStrategy() {
     clientID: '494140187770420',
     clientSecret: '25dd6c56e7c62f7213f59f79d4507026',
     callbackURL: config.auth.callbackUrl,
-    profileFields: ["name", "email", "link", "locale", "timezone"]
+    profileFields: ['id', 'name', 'displayName', 'emails', 'picture.type(large)']
   }, (accessToken, refreshToken, profile, done) => {
-    const user = profile || {};
 
-    user.tokens = {
-      accessToken: accessToken,
-      refreshToken: refreshToken
-    };
-
-    done(null, user);
+    request({
+      method: 'POST',
+      uri: config.proxy.user.endpoint + '/persons/person',
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: {
+          provider: 'facebook',
+          providedId: profile.id,
+          displayName: profile.displayName,
+          emails: profile.emails.map(email => email.value),
+          profilePicture: profile.photos[0].value
+      },
+      json: true
+    })
+    .then(user => {
+      const userSession = {
+        user: user,
+        tokens: {
+          facebookAccessToken: accessToken
+        }
+      };
+      done(null, userSession);
+    })
+    .catch(err => {
+      console.log(err);
+      done(err);
+    });
+    
   });
 
   passport.use(fbStrategy);
@@ -55,9 +78,8 @@ function authenticate(options) {
         res.redirect(config.auth.loginUrl);
       }
     }
-
     if (req.isAuthenticated()) {
-      next()
+      next();
     } else {
       fail();
     }

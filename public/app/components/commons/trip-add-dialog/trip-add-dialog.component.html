@@ -41,14 +41,38 @@
       </div>
     </mat-step>
     <mat-step formGroupName="participantsFormGroup">
-        <ng-template matStepLabel>Who were you with?</ng-template>
-        <mat-form-field>
-          <input matInput placeholder="Test" formControlName="test">
+      <ng-template matStepLabel>Who were you with?</ng-template>
+      <div class="participantsFormContainer">
+        <mat-form-field class="buddyNameInput">
+          <input matInput placeholder="Buddy name" [matAutocomplete]="auto" formControlName='userInput'>
         </mat-form-field>
-        <div class="stepControl">
-          <button mat-button matStepperPrevious type="button">Back</button>
-          <button mat-button matStepperNext type="button">Next</button>
+
+        <mat-autocomplete #auto="matAutocomplete" class="buddiesList">
+          <ng-container>
+            <mat-option *ngFor="let user of userSearchResult$ | async" (click)="addParticipant(user)" class="userOption">
+              <div class="userInfo">
+                <img *ngIf="user.profilePic; else noProfilPic" src="{{user.profilePic}}" alt="{{user.displayName}}"/>
+                <ng-template #noProfilPic><img src="assets/img/defaultAvatar.jpg" alt="{{user.displayName}}"/></ng-template>
+                <span>{{ user.displayName }}</span>
+              </div>
+            </mat-option>
+          </ng-container>
+        </mat-autocomplete>
+
+        <div class="participantsList">
+          <div class="buddyInfo" *ngFor="let buddy of buddies">
+            <img *ngIf="buddy.profilePic; else noProfilPic" src="{{buddy.profilePic}}" alt="{{buddy.displayName}}"/>
+            <ng-template #noProfilPic><img src="assets/img/defaultAvatar.jpg" alt="{{buddy.displayName}}"/></ng-template>
+            <span class="buddyName">{{ buddy.displayName }}</span>
+            <button mat-icon-button (click)="removeParticipant(buddy)"><mat-icon class="sidebar-icon">clear</mat-icon></button>
+          </div>
         </div>
+      </div>
+
+      <div class="stepControl">
+        <button mat-button matStepperPrevious type="button">Back</button>
+        <button mat-button matStepperNext type="button">Next</button>
+      </div>
     </mat-step>
     <mat-step>
       <ng-template matStepLabel>Almost done</ng-template>

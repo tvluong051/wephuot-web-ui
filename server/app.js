@@ -52,8 +52,9 @@ app.use(session({
   secret: 'wephuot',
   name: 'wephuot',
   proxy: true,
-  resave: true,
-  saveUninitialized: true
+  resave: false,
+  saveUninitialized: true,
+  unset: 'destroy'
 }));
 
 passport = passportConfig.configurePassportStrategy();
@@ -68,7 +69,10 @@ app.listen(PORT, () => console.log('Server is listening on: ' + PORT));
  *****************************************************************************/
 
 // Login route redirect to predix uaa login page
-app.get(serverConfig.auth.loginUrl, passport.authenticate(serverConfig.provider));
+
+app.get(serverConfig.auth.loginUrl, passport.authenticate(serverConfig.provider, {
+  scope: ['email', 'user_friends'],
+}));
 
   // Callback route redirects to secure route after login
 app.get(serverConfig.auth.callbackUrl, passport.authenticate(serverConfig.provider, {
@@ -84,11 +88,26 @@ app.get('/logout', (req, res) => {
   res.redirect('/');
 });
 
-//TODO: To be removed once user api is implemented
-app.get('/api/user/userinfo', (req, res) => res.send({
-  userId: 'testId',
-  email: 'toto@toto.com'
-}));
+/*app.get('/userinfo', mainAuthenticate(), (req, res) => {
+  res.send(req.user.user);
+});
+app.use('/api', mainAuthenticate({noRedirect: true}), proxy.router);
+
+const DIST_FOLDER = path.join(process.cwd(), 'dist');
+
+app.use(mainAuthenticate(), express.static(path.join(DIST_FOLDER, 'public')));
+app.use('/staticFile', mainAuthenticate(), express.static(STATIC_FILE_PATH));
+
+app.use('/', mainAuthenticate(), (req, res) => res.sendFile(path.join(DIST_FOLDER, '/public/index.html')));*/
+
+app.get('/userinfo', (req, res) => {
+  res.send({
+    userId: '19e51650-f257-49e7-8bea-ddd3d70acc5f',
+    profilePic: 'https://platform-lookaside.fbsbx.com/platform/profilepic/?asid=10209935378981344&height=200&width=200&ext=1549740314&hash=AeQjGYXdpNkprLHh',
+    displayName: 'Luong Tuan Viet',
+    email: 'tonami198990@yahoo.fr'
+  });
+});
 app.use('/api', proxy.router);
 
 const DIST_FOLDER = path.join(process.cwd(), 'dist');
@@ -96,7 +115,7 @@ const DIST_FOLDER = path.join(process.cwd(), 'dist');
 app.use(express.static(path.join(DIST_FOLDER, 'public')));
 app.use('/staticFile', express.static(STATIC_FILE_PATH));
 
-app.use('/', (req, res) => res.sendFile(path.join(DIST_FOLDER, '/public/index.html'))) ;
+app.use('/', (req, res) => res.sendFile(path.join(DIST_FOLDER, '/public/index.html')));
 
 /****************************************************************************
  ERROR HANDLERS

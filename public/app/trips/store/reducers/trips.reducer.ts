@@ -8,8 +8,6 @@ export function reducer(tripsState: Trips = [], action: Action) {
       const ftsa = action as TripFetchTripsSuccessAction;
 
       return [...ftsa.payload.trips];
-      break;
-
     case TripActionType.TRIP_FETCH_TRIP_DETAIL_SUCCESS:
       const ftdsa = action as TripFetchTripDetailSuccessAction;
       const updatedTrip = ftdsa.payload.trip;

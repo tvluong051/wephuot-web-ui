@@ -4,13 +4,13 @@ import { ActivatedRoute } from '@angular/router';
 import { Trip } from '../../../models/trip.model';
 import { Spendings } from '../../../models/spending.model';
 import { Users, User } from '../../../models/user.model';
-import { Observable } from 'rxjs';
+import { Observable, from, of } from 'rxjs';
 import { select, Store } from '@ngrx/store';
 import { getTripStateById, getSpendingsStateByTripId, getParticipantsStateByTripId } from '../../../trips/store/reducers';
 import { TripFetchTripDetailAction } from 'public/app/trips/store/actions/trip.action';
 import { TripFetchSpendingsAction } from 'public/app/trips/store/actions/spending.action';
-import { getLoggedUser } from 'public/app/users/store/reducers';
-import { map } from 'rxjs/operators';
+import { getLoggedUser, getUsersDetails } from 'public/app/users/store/reducers';
+import { map, tap, switchMap } from 'rxjs/operators';
 
 @Component({
     selector: 'app-trip-detail',
@@ -47,6 +47,13 @@ export class TripDetailComponent implements OnInit {
         this.participants$ = this.store.pipe(
             select(getParticipantsStateByTripId, {
                 tripId: this.tripId
+            }),
+            switchMap(participants => {
+                console.log(participants);
+                const usersIds = participants.map(participant => participant.userId);
+                return this.store.pipe(
+                    select(getUsersDetails, {usersIds: usersIds})
+                );
             })
         );
         this.spendings$ = this.store.pipe(

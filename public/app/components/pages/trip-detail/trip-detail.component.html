@@ -11,7 +11,7 @@
         <ng-template #noTripCover><img src="assets/img/thumbnail.svg" alt="{{trip.name}}"/></ng-template>
       </div>
       <div class="tripParticipants">
-        <div class="participant" *ngFor="let participant of trip.participants; let idx = index" [ngStyle]="{'transform': 'translateX(' + (3 *idx) + 'rem)'}">
+        <div class="participant" *ngFor="let participant of (participants$ | async); let idx = index" [ngStyle]="{'transform': 'translateX(' + (3 * idx) + 'rem)'}">
           <img *ngIf="participant.profilePic; else noProfilPic" src="{{participant.profilePic}}" alt="{{participant.name}}"/>
           <ng-template #noProfilPic><img src="assets/img/defaultAvatar.jpg" alt="{{participant.name}}"/></ng-template>
         </div>
@@ -19,7 +19,11 @@
       <div class="tripDescription">{{trip.description}}</div>
     </section>
     <section class="rightContainer">
-      <button mat-flat-button class="addSpendingBtn" (click)="showAddSpendingBox()"><mat-icon>add</mat-icon></button>
+      <div class="buttonsRow">
+        <button mat-flat-button class="addSpendingBtn" (click)="showAddSpendingBox()"><mat-icon>add</mat-icon></button>
+        <button mat-flat-button class="showReportBtn" (click)="showReport()"><mat-icon>trending_up</mat-icon></button>
+        <button mat-flat-button class="downloadReportBtn" (click)="downloadReport()"><mat-icon>archive</mat-icon></button>
+      </div>
       <app-add-spending-box *ngIf="addSpendingBoxShowUp" [tripId]="tripId" class="addSpendingBox" [loggedUser$]="loggedUser$" [participants$]="participants$" (close)="hideAddSpendingBox()"></app-add-spending-box>
       <app-spendings-list class="spendings" [tripId]="tripId" [spendings$]="spendings$" [participants$]="participants$"></app-spendings-list>
     </section>

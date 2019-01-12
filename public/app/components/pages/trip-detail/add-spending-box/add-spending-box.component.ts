@@ -1,8 +1,8 @@
 import { Component, OnInit, Input, ViewEncapsulation, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { Users, User } from 'public/app/models/user.model';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
-import { Observable, Subject } from 'rxjs';
-import { takeUntil, take } from 'rxjs/operators';
+import { Observable, Subject, Subscription } from 'rxjs';
+import { takeUntil, take, switchMap, map, filter, mergeMap } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import { TripAddSpendingAction } from 'public/app/trips/store/actions/spending.action';
 import { Spending } from 'public/app/models/spending.model';
@@ -24,6 +24,10 @@ export class AddSpendingBoxComponent implements OnInit, OnDestroy {
     @Output()
     close = new EventEmitter();
 
+    crediter: User;
+
+    private participantsResolved$: Subscription;
+
     private unsubscribed$ = new Subject();
 
     addSpendingFormGroup: FormGroup;
@@ -32,20 +36,20 @@ export class AddSpendingBoxComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.addSpendingFormGroup = this._formBuilder.group({
-            description: ['', Validators.required]
+            description: ['', Validators.required],
+            crediterFormGroup: this._formBuilder.group({
+                amount: [0, Validators.required],
+                crediterId: '',
+                spentDate: new Date()
+            })
         });
         this.loggedUser$
             .pipe(
                 takeUntil(this.unsubscribed$)
             ).subscribe(loggedUser => {
-                const crediterFormGroupName = 'crediterFormGroup';
-
                 if (loggedUser) {
-                    this.addSpendingFormGroup.addControl(crediterFormGroupName, this._formBuilder.group({
-                        amount: [0, Validators.required],
-                        crediterId: loggedUser.userId,
-                        spentDate: new Date()
-                    }));
+                    this.addSpendingFormGroup.value.crediterFormGroup.crediterId = loggedUser.userId;
+                    this.crediter = loggedUser;
                 }
             });
         this.participants$
@@ -67,6 +71,18 @@ export class AddSpendingBoxComponent implements OnInit, OnDestroy {
                 }
             });
 
+        this.addSpendingFormGroup.get('crediterFormGroup').get('crediterId').valueChanges.pipe(
+            takeUntil(this.unsubscribed$)
+        ).subscribe(crediterId => {
+            if (this.participantsResolved$) {
+                this.participantsResolved$.unsubscribe();
+            }
+            this.participantsResolved$ = this.participants$.pipe(
+                takeUntil(this.unsubscribed$)
+            ).subscribe(participants => {
+                this.crediter = participants.find(participant => participant.userId === crediterId);
+            });
+        });
     }
 
     ngOnDestroy(): void {
