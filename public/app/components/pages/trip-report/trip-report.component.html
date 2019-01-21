@@ -1,0 +1,12 @@
+<div class="tripReportContainer">
+    <div>
+        <button mat-flat-button class="backBtn" (click)="goBack()"><mat-icon class="backIcon">reply</mat-icon>Back</button>
+    </div>
+
+    <div class="tripReport">
+        <div class="chartTitle">Total wallet damages from <span class="tripName">{{ (trip$ | async)?.name}}</span></div>
+        <div class="chartContainer">
+            <canvas class="chart" id="canvas">{{ chart }}</canvas>
+        </div>
+    </div>
+</div>  

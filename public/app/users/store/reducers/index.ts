@@ -29,12 +29,15 @@ export const getUserSearchResults = createSelector(
 export const getUsersDetails = createSelector(
     getUsersState,
     (state: UsersState, props: {usersIds: string[]}) => {
-        const users: Users = [];
+        let users: Users = [];
         props.usersIds.forEach(userId => {
             if (state.loggedUser.userId === userId) {
                 users.push(state.loggedUser);
             } else {
-                users.push(state.tripBuddies.find(buddy => buddy.userId === userId));
+                const buddies = state.tripBuddies.find(buddy => buddy.userId === userId);
+                if (buddies) {
+                    users = users.concat(buddies);
+                }
             }
         });
         return users;

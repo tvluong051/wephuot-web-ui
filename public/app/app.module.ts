@@ -16,6 +16,8 @@ import { TripModule } from './trips/trip.module';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { UserModule } from './users/user.module';
+import { TripReportModule } from './components/pages/trip-report/trip-report.module';
+import { TripReportComponent } from './components/pages/trip-report/trip-report.component';
 
 
 const routes: Routes = [
@@ -26,6 +28,10 @@ const routes: Routes = [
   {
     path: 'trip/:tripId',
     component: TripDetailComponent
+  },
+  {
+    path: 'report/:tripId',
+    component: TripReportComponent
   },
   {
     path: '',
@@ -51,6 +57,7 @@ const routes: Routes = [
     TripModule,
     TripAddDialogModule,
     TripDetailModule,
+    TripReportModule,
     UserModule
   ],
   entryComponents: [

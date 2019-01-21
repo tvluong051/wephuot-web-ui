@@ -6,7 +6,7 @@ import { Store } from '@ngrx/store';
 import { TripUpdateSpendingAction, TripDeleteSpendingAction } from 'public/app/trips/store/actions/spending.action';
 import { MatDialog } from '@angular/material';
 import { ConfirmDialogComponent } from 'public/app/components/commons/confirm-dialog/confirm-dialog.component';
-import { Subject, Subscription } from 'rxjs';
+import { Subject, Subscription, Observable } from 'rxjs';
 import { takeUntil, debounceTime } from 'rxjs/operators';
 
 @Component({
@@ -21,7 +21,7 @@ export class SpendingDetailComponent implements OnInit, OnDestroy {
     tripId: string;
 
     @Input()
-    participants: Users;
+    participants$: Observable<Users>;
 
     @Input()
     spending: Spending;
@@ -40,35 +40,61 @@ export class SpendingDetailComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        this.spendingFormGroup = this._formBuilder.group({
+            crediterFormGroup: this._formBuilder.group({
+                amount: this.spending.amount,
+                spentDate: new Date(this.spending.spentDate),
+                crediterId: this.spending.crediter.userId
+            }),
+            sharepartsFormGroup: this._formBuilder.group({
+                equallyDivided: this.spending.equallyDivided,
+                shareparts: this._formBuilder.group({})
+            })
+        });
         this.resetForm();
     }
 
     resetForm() {
         this.crediter = this.spending.crediter;
-        const crediter = this.participants.find(participant => participant.userId === this.spending.crediter.userId);
-        if (crediter) {
-            this.crediter = crediter;
-        }
-        if (this.crediterValueChange$) {
-            this.crediterValueChange$.unsubscribe();
-        }
 
-        this.spendingFormGroup = this.buildSpendingFormGroup(this.spending, this.participants);
-        this.crediterValueChange$ = this.spendingFormGroup
-            .get('crediterFormGroup')
-            .get('crediterId')
-            .valueChanges
-            .pipe(
-                debounceTime(300),
-                takeUntil(this.unsubscribed$)
-            ).subscribe(value => {
-                if (value) {
-                    const newCrediter = this.participants.find(participant => participant.userId === value);
-                    if (newCrediter) {
-                        this.crediter = newCrediter;
+        this.participants$.pipe(
+            takeUntil(this.unsubscribed$)
+        ).subscribe(participants => {
+            if (participants) {
+                const crediter = participants.find(participant => {
+                    if (participant) {
+                        return participant.userId === this.spending.crediter.userId;
                     }
+                    return false;
+                });
+                if (crediter) {
+                    this.crediter = crediter;
                 }
-            });
+
+                this.spendingFormGroup = this.buildSpendingFormGroup(this.spending, participants);
+
+                if (this.crediterValueChange$) {
+                    this.crediterValueChange$.unsubscribe();
+                }
+
+                this.crediterValueChange$ = this.spendingFormGroup
+                .get('crediterFormGroup')
+                .get('crediterId')
+                .valueChanges
+                .pipe(
+                    debounceTime(300),
+                    takeUntil(this.unsubscribed$)
+                ).subscribe(value => {
+                    if (value) {
+                        const newCrediter = participants.find(participant => participant.userId === value);
+                        if (newCrediter) {
+                            this.crediter = newCrediter;
+                        }
+                    }
+                });
+            }
+        });
+
     }
 
     buildSpendingFormGroup(spending: Spending, participants: Users): FormGroup {
@@ -76,7 +102,7 @@ export class SpendingDetailComponent implements OnInit, OnDestroy {
             ...spending.shareparts
         };
         participants.forEach(participant => {
-            if (!controls[participant.userId]) {
+            if (participant && !controls[participant.userId]) {
                 controls[participant.userId] = '';
             }
         });

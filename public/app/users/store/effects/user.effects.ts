@@ -13,7 +13,7 @@ import {
     UserSearchUserAction,
     UserSearchUserSuccessAction
 } from '../actions/user.action';
-import { tap, map, catchError, switchMap } from 'rxjs/operators';
+import { tap, map, catchError, switchMap, mergeMap } from 'rxjs/operators';
 import { User, UserSearchResult } from 'public/app/models/user.model';
 
 @Injectable()
@@ -40,7 +40,7 @@ export class UserEffects {
     @Effect()
     fetchUserDetail$: Observable<Action> = this.actions$.pipe(
         ofType(UserActionType.USER_FETCH_USER_DETAIL),
-        switchMap((action: UserFetchUserDetailAction) =>
+        mergeMap((action: UserFetchUserDetailAction) =>
             this.httpClient.get(`${this.userApiUrl}/persons/person/${action.payload.userId}`, {
                 headers: new HttpHeaders({ 'Content-Type': 'application/json' })
             }).pipe(
