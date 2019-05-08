@@ -39,6 +39,28 @@ $theme-color-opacity: $default-theme-color-opacity;
     }
   }
 
+  #userBtn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    min-width: 40px;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+
+    .loggedUserAvatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%; 
+      overflow: hidden;
+
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+
   .logo {
     img {
       width: 2rem;

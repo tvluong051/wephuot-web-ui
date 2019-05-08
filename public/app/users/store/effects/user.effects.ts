@@ -31,7 +31,12 @@ export class UserEffects {
             }).pipe(
                 tap(() => console.log('Get userinfo of logged user')),
                 map(user => new UserLoggedUserInfoSuccessAction({user: user as User})),
-                catchError(() => of(new UserLoggedUserInfoErrorAction()))
+                catchError((error) => {
+                    if (error.status === 401) {
+                        return of(new UserLoggedUserInfoErrorAction({status: error.status, info: {redirectUrl: error.error.redirectUrl}}));
+                    }
+                    return of(new UserLoggedUserInfoErrorAction({status: error.status}));
+                })
 
             )
         )

@@ -75,7 +75,10 @@ function authenticate(options) {
       if (options && options.noRedirect) {
         res.sendStatus(HTTP_UNAUTHORIZED);
       } else {
-        res.redirect(config.auth.loginUrl);
+        res.status(HTTP_UNAUTHORIZED)
+        res.send({
+          redirectUrl: '/login'
+        });
       }
     }
     if (req.isAuthenticated()) {

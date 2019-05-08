@@ -27,6 +27,8 @@ export class UserLoggedUserInfoSuccessAction implements Action {
 
 export class UserLoggedUserInfoErrorAction implements Action {
     readonly type = UserActionType.USER_LOGGED_USERINFO_ERROR;
+
+    constructor(public payload: {status: number, info?: any}) {}
 }
 
 export class UserFetchUserDetailAction implements Action {
