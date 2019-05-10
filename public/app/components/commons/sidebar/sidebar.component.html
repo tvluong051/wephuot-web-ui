@@ -1,6 +1,6 @@
 <div class="sidebar">
   <div class="stack top-stack">
-    <a mat-icon-button aria-label="Home" id="homeBtn" class="logo" routerLink="/">
+    <a mat-icon-button aria-label="Home" id="homeBtn" class="logo" routerLink="/dashboard">
       <img src="assets/img/logo.png"/>
     </a>
     <button mat-icon-button aria-label="Add new trip" id="addBtn">
@@ -11,8 +11,11 @@
     <mat-menu #userMenu="matMenu" [overlapTrigger]="false">
       <a mat-menu-item routerLink="/logout">Logout</a>
     </mat-menu>
-    <button mat-icon-button aria-label="Open user menu" [matMenuTriggerFor]="userMenu" id="userBtn" >
-      <mat-icon class="sidebar-icon">face</mat-icon>
+    <button mat-button aria-label="Open user menu" [matMenuTriggerFor]="userMenu" id="userBtn">
+      <div class="loggedUserAvatar" *ngIf="loggedUser$ | async as loggedUser">
+          <img *ngIf="loggedUser.profilePic; else noProfilPic" src="{{loggedUser.profilePic}}" alt="{{loggedUser.displayName}}"/>
+          <ng-template #noProfilPic><mat-icon class="sidebar-icon">face</mat-icon></ng-template>
+      </div>
     </button>
 
   </div>

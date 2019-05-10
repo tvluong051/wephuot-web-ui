@@ -6,6 +6,8 @@ import {
 } from '@angular/material';
 import { SidebarComponent } from './sidebar.component';
 import { RouterModule } from '@angular/router';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 @NgModule({
@@ -13,6 +15,8 @@ import { RouterModule } from '@angular/router';
     SidebarComponent
   ],
   imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
     MatButtonModule,
     MatIconModule,
     MatMenuModule,

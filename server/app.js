@@ -88,7 +88,7 @@ app.get('/logout', (req, res) => {
   res.redirect('/');
 });
 
-/*app.get('/userinfo', mainAuthenticate(), (req, res) => {
+app.get('/userinfo', mainAuthenticate(), (req, res) => {
   res.send(req.user.user);
 });
 app.use('/api', mainAuthenticate({noRedirect: true}), proxy.router);
@@ -98,24 +98,7 @@ const DIST_FOLDER = path.join(process.cwd(), 'dist');
 app.use(mainAuthenticate(), express.static(path.join(DIST_FOLDER, 'public')));
 app.use('/staticFile', mainAuthenticate(), express.static(STATIC_FILE_PATH));
 
-app.use('/', mainAuthenticate(), (req, res) => res.sendFile(path.join(DIST_FOLDER, '/public/index.html')));*/
-
-app.get('/userinfo', (req, res) => {
-  res.send({
-    userId: '19e51650-f257-49e7-8bea-ddd3d70acc5f',
-    profilePic: 'https://platform-lookaside.fbsbx.com/platform/profilepic/?asid=10209935378981344&height=200&width=200&ext=1549740314&hash=AeQjGYXdpNkprLHh',
-    displayName: 'Luong Tuan Viet',
-    email: 'tonami198990@yahoo.fr'
-  });
-});
-app.use('/api', proxy.router);
-
-const DIST_FOLDER = path.join(process.cwd(), 'dist');
-
-app.use(express.static(path.join(DIST_FOLDER, 'public')));
-app.use('/staticFile', express.static(STATIC_FILE_PATH));
-
-app.use('/', (req, res) => res.sendFile(path.join(DIST_FOLDER, '/public/index.html')));
+app.use('/', mainAuthenticate(), (req, res) => res.sendFile(path.join(DIST_FOLDER, '/public/index.html')));
 
 /****************************************************************************
  ERROR HANDLERS
