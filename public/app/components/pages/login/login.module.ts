@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { LoginComponent } from './login.component';
-import { MatButtonModule } from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
     declarations: [

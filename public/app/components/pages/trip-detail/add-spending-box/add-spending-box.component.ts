@@ -1,8 +1,8 @@
 import { Component, OnInit, Input, ViewEncapsulation, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { Users, User } from 'public/app/models/user.model';
-import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Observable, Subject, Subscription } from 'rxjs';
-import { takeUntil, take, switchMap, map, filter, mergeMap } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import { TripAddSpendingAction } from 'public/app/trips/store/actions/spending.action';
 import { Spending } from 'public/app/models/spending.model';
