@@ -1,21 +1,16 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { MatDialogRef } from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Trip } from '../../../models/trip.model';
 import { User, Users } from '../../../models/user.model';
 import { Store, select } from '@ngrx/store';
 import { TripSaveTripAction } from 'public/app/trips/store/actions/trip.action';
 import { getLoggedUser, getUserSearchResults } from 'public/app/users/store/reducers';
-import { takeUntil, debounceTime, tap, switchMap } from 'rxjs/operators';
+import { takeUntil, debounceTime } from 'rxjs/operators';
 import { Subject, Observable } from 'rxjs';
 import { UserSearchUserAction } from 'public/app/users/store/actions/user.action';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
-
-export interface TripAddDialogData {
-  newTrip: Trip;
-  creator: User;
-}
 
 @Component({
   selector: 'app-trip-add-dialog',

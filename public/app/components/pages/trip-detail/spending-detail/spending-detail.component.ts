@@ -4,7 +4,7 @@ import { Users, User } from '../../../../models/user.model';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TripUpdateSpendingAction, TripDeleteSpendingAction } from 'public/app/trips/store/actions/spending.action';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from 'public/app/components/commons/confirm-dialog/confirm-dialog.component';
 import { Subject, Subscription, Observable } from 'rxjs';
 import { takeUntil, debounceTime } from 'rxjs/operators';
