@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { MatDialogRef } from '@angular/material';
-import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component';
 import { Trip } from '../../../models/trip.model';
 import { User, Users } from '../../../models/user.model';
 import { Store, select } from '@ngrx/store';
@@ -11,6 +10,7 @@ import { getLoggedUser, getUserSearchResults } from 'public/app/users/store/redu
 import { takeUntil, debounceTime, tap, switchMap } from 'rxjs/operators';
 import { Subject, Observable } from 'rxjs';
 import { UserSearchUserAction } from 'public/app/users/store/actions/user.action';
+import { ImageCroppedEvent } from 'ngx-image-cropper';
 
 export interface TripAddDialogData {
   newTrip: Trip;
