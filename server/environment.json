@@ -1,0 +1,19 @@
+{
+  "environment": "production",
+  "port": 51080,
+  "portTls": 51443,
+  "redisHost": "127.0.0.1",
+  "redisPort": 6379,
+  "staticFilePath": "/var/www/our-phuot",
+  "idProvider": "facebook",
+  "services": [
+    {
+      "name": "money-management",
+      "uri": "https://ourphuot.com:8080/api/v1"
+    },
+    {
+      "name": "user",
+      "uri": "https://ourphuot.com:8181/api/v1"
+    }
+  ]
+}

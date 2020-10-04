@@ -7,23 +7,22 @@
 const url = require('url');
 const express = require('express');
 const expressProxy = require('express-http-proxy');
-const HttpsProxyAgent = require('https-proxy-agent');
 const config = require('./server-config').getServerConfig();
 const router = express.Router(); // eslint-disable-line new-cap
-
-const corporateProxyServer =
-  process.env.http_proxy || process.env.HTTP_PROXY ||
-  process.env.https_proxy || process.env.HTTPS_PROXY;
-
-let corporateProxyAgent;
+const moment = require('moment');
+const logger = require('./logger').logger;
+const got = require('got');
+const fs = require('fs');
+const path = require('path');
 
 // Constants
 const HTTP_FORBIDDEN_STATUS = 403;
-
-// Corporate proxy
-if (corporateProxyServer) {
-  corporateProxyAgent = new HttpsProxyAgent(corporateProxyServer);
-}
+const HTTP_OK_STATUS = 200;
+const CERTIFICATE_FOLDER = config.certificateFolder;
+const CERTIFICATE_FILE = config.certificateFile;
+const CERTIFICATE_KEY = config.certificateKey;
+const CERTIFICATE_CA_FILE = config.certificateCaFile;
+const CERTIFICATE_CA_FULL_FILE = config.certificateCaFullFile;
 
 /* ********* Define Services Routes ********* */
 
@@ -34,13 +33,8 @@ function cleanResponseHeaders(proxyRes, proxyResData, userReq, userRes) {
 
 function buildDecorator(headers) {
   return function (proxyReqOpts) {
-    if (corporateProxyAgent) {
-      proxyReqOpts.agent = corporateProxyAgent;
-    }
-
     if (!proxyReqOpts.headers['content-type'] || proxyReqOpts.headers['content-type'].match(/text\/plain/i)) {
-      console.log('Content-Type header not set for request to ' +
-        proxyReqOpts.path);
+      logger.info(`Content-Type header not set for request to ${proxyReqOpts.path}`);
     }
 
     if (headers) {
@@ -73,8 +67,7 @@ function setProxyRoute(key, serviceConfig) {
   let pathCalculator;
 
   if (serviceConfig.endpoint) {
-    console.log('setting proxy route for key: ' + key);
-    console.log('serviceEndpoint: ' + serviceConfig.endpoint);
+    logger.info(`setting proxy route for api key: ${key} => ${serviceConfig.endpoint}`);
 
     decorator = buildDecorator(serviceConfig.headers);
     pathCalculator = buildPathCalculator(serviceConfig.endpoint);
@@ -85,7 +78,7 @@ function setProxyRoute(key, serviceConfig) {
       proxyReqPathResolver: pathCalculator
     }));
   } else {
-    console.log('No endpoint found for service ' + key);
+    logger.error(`No endpoint found for service ${key}`);
   }
 }
 
@@ -96,15 +89,63 @@ function setProxyRoutes() {
   });
 }
 
+function getClientToken(socialTokens) {
+  let qs = {};
+  if (socialTokens) {
+    if (socialTokens.facebookAccessToken) {
+      qs = {
+        tokenProvider: 'facebook',
+        token: socialTokens.facebookAccessToken
+      };
+    }
+  }
+  return (async () => {
+    try {
+      const body = await got(config.proxy.user.endpoint + '/token', {
+        searchParams: qs,
+        https: {
+          key: fs.readFileSync(path.join(CERTIFICATE_FOLDER, CERTIFICATE_KEY)),
+          ca: [
+            fs.readFileSync(path.join(CERTIFICATE_FOLDER, CERTIFICATE_CA_FILE)),
+            fs.readFileSync(path.join(CERTIFICATE_FOLDER, CERTIFICATE_CA_FULL_FILE))        
+          ],
+          certificate: fs.readFileSync(path.join(CERTIFICATE_FOLDER, CERTIFICATE_FILE))
+        }
+      }).json();
+    
+      return body;
+    } catch (err) {
+      logger.error( "ERROR fetching client token: code " + err.statusCode + " - " + err.body);
+    }
+  })();
+}
 
 /* ********* Add Token Middleware ********* */
 
 function addClientTokenMiddleware(req, res, next) {
-  if (req.session) {
-    next();
-  } else {
+  if (!req.session) {
+    logger.error('No session found!');
     res.status(HTTP_FORBIDDEN_STATUS).send('Forbidden');
   }
+  if (req.session.authorizationHeader &&
+    moment(req.session.clientTokenExpires).isAfter(moment())) {
+    logger.info('Token found!');
+    req.headers.Authorization = req.session.authorizationHeader;
+    next();
+  } else {
+      logger.info('Toekn not found or expired. Requesting new one ...');
+      getClientToken(req.session.passport.user.tokens)
+          .then(token => {
+              req.session.authorizationHeader = 'Bearer ' + token.accessToken;
+              req.session.clientTokenExpires = token.expiresTokenTs;
+              req.headers.Authorization = req.session.authorizationHeader;
+              next();
+          })
+          .catch(function (errorString) {
+              res.status(HTTP_SERVER_ERROR).send(errorString);
+          });
+  }
+
 }
 
 router.use('/', addClientTokenMiddleware);

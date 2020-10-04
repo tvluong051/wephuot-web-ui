@@ -6,11 +6,20 @@
 
 const config = require('./server-config').getServerConfig();
 const passport = require('passport');
-const request = require('request-promise');
 const FacebookStrategy = require('passport-facebook').Strategy;
+const logger = require('./logger').logger;
+const got = require('got');
+const fs = require('fs');
+const path = require('path');
+
 let fbStrategy;
 
 const HTTP_UNAUTHORIZED = 401;
+const CERTIFICATE_FOLDER = config.certificateFolder;
+const CERTIFICATE_FILE = config.certificateFile;
+const CERTIFICATE_KEY = config.certificateKey;
+const CERTIFICATE_CA_FILE = config.certificateCaFile;
+const CERTIFICATE_CA_FULL_FILE = config.certificateCaFullFile;
 
 function configurePassportStrategy() {
   // Passport session setup.
@@ -28,40 +37,45 @@ function configurePassportStrategy() {
   });
 
   fbStrategy = new FacebookStrategy({
-    clientID: '494140187770420',
-    clientSecret: '25dd6c56e7c62f7213f59f79d4507026',
+    clientID: config.auth.credentials.clientId,
+    clientSecret: config.auth.credentials.clientSecret,
     callbackURL: config.auth.callbackUrl,
     profileFields: ['id', 'name', 'displayName', 'emails', 'picture.type(large)']
   }, (accessToken, refreshToken, profile, done) => {
 
-    request({
-      method: 'POST',
-      uri: config.proxy.user.endpoint + '/persons/person',
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: {
-          provider: 'facebook',
-          providedId: profile.id,
-          displayName: profile.displayName,
-          emails: profile.emails.map(email => email.value),
-          profilePicture: profile.photos[0].value
-      },
-      json: true
-    })
-    .then(user => {
-      const userSession = {
-        user: user,
-        tokens: {
-          facebookAccessToken: accessToken
-        }
-      };
-      done(null, userSession);
-    })
-    .catch(err => {
-      console.log(err);
-      done(err);
-    });
+    (async () => {
+      try {
+        const user = await got.post(config.proxy.user.endpoint + '/persons/person', {
+          https: {
+            key: fs.readFileSync(path.join(CERTIFICATE_FOLDER, CERTIFICATE_KEY)),
+            ca: [
+              fs.readFileSync(path.join(CERTIFICATE_FOLDER, CERTIFICATE_CA_FILE)),
+              fs.readFileSync(path.join(CERTIFICATE_FOLDER, CERTIFICATE_CA_FULL_FILE))
+            ],
+            certificate: fs.readFileSync(path.join(CERTIFICATE_FOLDER, CERTIFICATE_FILE))
+          },
+          json: {
+            provider: 'facebook',
+            providedId: profile.id,
+            displayName: profile.displayName,
+            emails: profile.emails.map(email => email.value),
+            profilePicture: profile.photos[0].value
+          }
+        }).json();
+    
+        const userSession = {
+          user: user,
+          tokens: {
+            facebookAccessToken: accessToken
+          }
+        };
+        
+        done(null, userSession);
+      } catch (err) {
+        logger.error(err);
+        done(err);
+      }
+    })();
     
   });
 
