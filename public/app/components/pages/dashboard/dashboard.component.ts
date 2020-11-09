@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 import { TripAddDialogComponent } from '../../commons/trip-add-dialog/trip-add-dialog.component';
 
@@ -61,12 +61,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     onSelect(selectedTrip: Trip): void {
         if (selectedTrip.status !== TripStatus.VALIDATED) {
             console.log('error');
-                const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-                    data: {
-                        confirmQuestion: 'This trip is in PENDING state. \
-                        It will be accessible once it is VALIDATED but then you cannot change its details anymore. \
-                        Would you like to validate it?'
-                    }
+            const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+                data: {
+                    confirmQuestion: 'This trip is in PENDING state. \
+                    It will be accessible once it is VALIDATED but then you cannot change its details anymore. \
+                    Would you like to validate it?'
+                }
             });
             dialogRef.afterClosed()
                 .pipe(

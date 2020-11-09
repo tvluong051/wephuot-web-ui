@@ -20,10 +20,22 @@ const RedisStore = require('connect-redis')(session);
 let passport;
 let mainAuthenticate = options => passportConfig.authenticate(options);
 
-const serverConfig = require("./server-config").getServerConfig();
+// Http(s) server
+let http = require('http');
+let https = require('https');
+const logger = require('./logger').logger;
+
+const fs = require('fs');
+const serverConfig = require('./server-config').getServerConfig();
 
 const PORT = serverConfig.port;
+const PORT_TLS = serverConfig.portTls;
 const STATIC_FILE_PATH = serverConfig.staticFilePath;
+const CERTIFICATE_FOLDER = serverConfig.certificateFolder;
+const CERTIFICATE_FILE = serverConfig.certificateFile;
+const CERTIFICATE_KEY = serverConfig.certificateKey;
+const CERTIFICATE_CA_FILE = serverConfig.certificateCaFile;
+const CERTIFICATE_CA_FULL_FILE = serverConfig.certificateCaFullFile;
 
 const HTTP_INTERNAL_ERROR_STATUS = 500;
 // Express server
@@ -35,14 +47,14 @@ const app = express();
 
 app.use(helmet());
 app.set('trust proxy', 1);
-app.use(cookieParser('wephuot'));
+app.use(cookieParser('ourphuot'));
 app.use(compression());
 
 const redisStore = new RedisStore({
-  host: '127.0.0.1',
-  port: 6379,
+  host: serverConfig.redisHost,
+  port: serverConfig.redisPort,
   logErrors: function () {
-    console.error('Redis connection not found.');
+    logger.error('Redis connection not found.');
     throw 'Redis connection not found.';
   }
 });
@@ -62,13 +74,29 @@ app.use(passport.initialize());
 // Also use passport.session() middleware, to support persistent login sessions (recommended).
 app.use(passport.session());
 
-app.listen(PORT, () => console.log('Server is listening on: ' + PORT));
+http.createServer(app).listen(PORT, () => logger.info(`Server is listening on: ${PORT}`));
+https.createServer({
+  cert: fs.readFileSync(path.join(CERTIFICATE_FOLDER, CERTIFICATE_FILE)),
+  ca: [
+    fs.readFileSync(path.join(CERTIFICATE_FOLDER, CERTIFICATE_CA_FILE)),
+    fs.readFileSync(path.join(CERTIFICATE_FOLDER, CERTIFICATE_CA_FULL_FILE))
+  ],
+  key: fs.readFileSync(path.join(CERTIFICATE_FOLDER, CERTIFICATE_KEY))
+}, app).listen(PORT_TLS, () => logger.info(`Server is listening securely on: ${PORT_TLS}`));
+
+app.use ((req, res, next) => {
+  if (req.secure) {
+    // request was via https, so do no special handling
+    next();
+  } else {
+    // request was via http, so redirect to https
+    res.redirect(`https://${req.hostname}${req.url}`);
+  }
+});
 
 /****************************************************************************
  SET UP EXPRESS ROUTES
  *****************************************************************************/
-
-// Login route redirect to predix uaa login page
 
 app.get(serverConfig.auth.loginUrl, passport.authenticate(serverConfig.provider, {
   scope: ['email', 'user_friends'],
@@ -93,12 +121,12 @@ app.get('/userinfo', mainAuthenticate(), (req, res) => {
 });
 app.use('/api', mainAuthenticate({noRedirect: true}), proxy.router);
 
-const DIST_FOLDER = path.join(process.cwd(), 'dist');
+const DIST_FOLDER = path.join(process.cwd(), 'public');
 
-app.use(mainAuthenticate(), express.static(path.join(DIST_FOLDER, 'public')));
+app.use(express.static(DIST_FOLDER));
 app.use('/staticFile', mainAuthenticate(), express.static(STATIC_FILE_PATH));
 
-app.use('/', mainAuthenticate(), (req, res) => res.sendFile(path.join(DIST_FOLDER, '/public/index.html')));
+app.use('/', (req, res) => res.sendFile(path.join(DIST_FOLDER, 'index.html')));
 
 /****************************************************************************
  ERROR HANDLERS

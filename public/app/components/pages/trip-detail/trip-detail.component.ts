@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Trip } from '../../../models/trip.model';
 import { Spendings } from '../../../models/spending.model';
 import { Users, User } from '../../../models/user.model';
-import { Observable, from, of, Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { select, Store } from '@ngrx/store';
 import { getTripStateById, getSpendingsStateByTripId, getParticipantsStateByTripId } from '../../../trips/store/reducers';
 import { TripFetchTripDetailAction } from 'public/app/trips/store/actions/trip.action';
